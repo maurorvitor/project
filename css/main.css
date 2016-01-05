@@ -6,6 +6,8 @@ html {
 }
 body {
   /* Margin bottom by footer height */
+  min-height: 1000px;
+  padding-top: 20px;  
   margin-bottom: 60px;
 }
 .footer {
