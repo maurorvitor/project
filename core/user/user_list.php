@@ -5,6 +5,9 @@
 	<table id="dbguser" class="table table-hover table-striped table-bordered" cellspacing="0" width="100%">
 		<thead>
 			<tr>
+			    <th></th>
+				<th></th>
+				<th></th>
 				<th>Nome</th>
 				<th>Email</th>
 				<th>Login</th>
@@ -14,3 +17,22 @@
 	</table>				
 	</div>
 </div>
+
+<div id="myModal" class="modal fade bs-example-modal-lg" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg">
+	<!-- Modal content-->
+	<div class="modal-content">			
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal">&times;</button>						
+	  </div>
+	  
+	  <div class="modal-body">
+		<?php  include 'user_view.php';  ?>
+	  </div>
+	  
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+	  </div>			  
+	</div>
+  </div>
+</div>	

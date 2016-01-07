@@ -83,12 +83,14 @@ function table_select($table, $fields = '*', $pk = array(), $order = ''){
 	mysqli_close($linkbase);  
 }
 
-function format_date($linhas, $coluna){
+function format_date($linhas, $coluna){	
 	foreach($linhas as $key => $value){
-		if($keys === $coluna){
-			date ("Y-m-d H:i:s", );
-		}	
+		if($key === $coluna){
+			$linhas[$key] = date("d/m/Y H:i:s", $linhas[$key]);
+		}
+		//print_r($value);
 	}
+	return $linhas;
 }
 
 ?>

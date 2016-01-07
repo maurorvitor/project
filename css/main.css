@@ -1,5 +1,10 @@
 /* Sticky footer styles
 -------------------------------------------------- */
+
+td.btngrid {
+    cursor: pointer;
+}
+
 html {
   position: relative;
   min-height: 100%;

@@ -30,8 +30,10 @@
 	if ($action == 'list'){	
 		$result = table_select($table);		
 		while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
-			$linhas[] = $row; 
-		}		  
+			$row['dtcriacao'] = date("d/m/Y H:i:s", strtotime($row['dtcriacao']));
+			$linhas[] = $row;
+		}
+		//print_r($linhas);
 		$data = array();
 		$data['data'] = $linhas;				
 	    echo json_encode($data);
