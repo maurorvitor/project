@@ -1,7 +1,7 @@
 
  $(document).ready(function(){
 	var table = $('#dbguser').DataTable({
-        "ajax": "core/user/user_insert.php?action=list",
+        "ajax": "core/user/user_db.php?action=list",
 		dom: 'Bfrtip',
         buttons: [
             {
@@ -63,24 +63,10 @@
 			"infoEmpty": "Nenhum Registro Encontrado",
 			"infoFiltered": "(Filtrados de _MAX_ registros)"}							
 	});
-
-	// $('#dbguser > tbody').on( 'click', 'tr td', function () {
-	// console.log(table.row(table.row(this).index()).data());		
-	// console.log(table.column(table.row(this).index()).data().iduser);
-	// console.log(table.column( 'email:name' ).data());
-	// console.log($(this));		
-	// } );
 	
-	$('#dbguser tbody').on( 'click', 'td', function () {
-		//console.log(table.column($(this).index()).data());
-		//console.log($(this).index());
-		//console.log(table.column($(this).index()).data());		
-		//console.log($('#dbguser > tbody > tr'));	
+	$('#dbguser tbody').on('click', 'td', function () {
 		var col = $(this).parent().children().index($(this));
 		var row = $(this).parent().parent().children().index($(this).parent());
-        //console.log('Row: ' + row + ', Column: ' + col);
-		//var table = $('#dbguser').DataTable();
-		//console.log(table.row(table.row(row)).data().iduser);
 		var iduser = table.row(table.row(row)).data().iduser;
 		var urluser = '';
 		if (col == 0){
@@ -93,61 +79,67 @@
 			urluser = 'core/user/user_view.php?page=del';
 		}else{
 		  return;
-		} 
-		$.ajax({
-		  type: 'GET',
-		  dataType: 'html', 		  
-		  url: urluser,		  
-		  success: function (response) {
-			//console.log(response);
-			// if (response.success == true){	
-				// $("#alertsucess").append("Registro inserido com sucesso!");
-				// $('#alertsucess').show();
-			// }else{
-				// $("#alerterror").append("Erro ao inserir registro!");
-				// $('#alerterror').show();  
-			// }
-			// $('#frmuser').trigger("reset");
-			$("#content-modal").html(response);
-		  },
-		  error: function(response) {
-			// $("#alerterror").append("Erro ao inserir registro!");
-			// $('#alerterror').show();  
-			// $('#frmuser').trigger("reset");		
-		  }
-		  
-		});			
-        		
+		} 		
+		$("#content-modal").load(urluser);
+		
+		$.getJSON('core/user/user_db.php?action=sel&id='+iduser, function(result){
+			$.each(result, function(i, field){				
+				$("#"+i).val(field);
+			});
+		});	
 		$('#myModal').modal('show');	
+		//console.log(iduser);
+        $("#iduser").val(iduser);		
+		
 	});	
-  
-  $('#frmuser').validator().on('submit', function (e) {
-    validou = e.isDefaultPrevented();  
-    e.preventDefault();        
-    if (validou != true) { 		
-		$.ajax({
-		  type: 'POST',
-		  dataType: 'json', 
-		  async: true,
-		  url: 'core/user/user_insert.php?action=insert',
-		  data: $('#frmuser').serialize(),
-		  success: function (response) {			
-			if (response.success == true){	
-				$("#alertsucess").append("Registro inserido com sucesso!");
-				$('#alertsucess').show();
-			}else{
+	
+	$('#frmuser').validator().on('submit', function (e) {
+		validou = e.isDefaultPrevented();  
+		e.preventDefault();        
+		if (validou != true) { 		
+			$.ajax({
+			  type: 'POST',
+			  dataType: 'json', 
+			  async: false,
+			  url: 'core/user/user_db.php?action=insert',
+			  data: $('#frmuser').serialize(),
+			  success: function (response) {			
+				if (response.success == true){	
+					$("#alertsucess").append("Registro inserido com sucesso!");
+					$('#alertsucess').show();
+				}else{
+					$("#alerterror").append("Erro ao inserir registro!");
+					$('#alerterror').show();  
+				}
+				$('#frmuser').trigger("reset");
+			  },
+			  error: function(response) {
 				$("#alerterror").append("Erro ao inserir registro!");
 				$('#alerterror').show();  
+				$('#frmuser').trigger("reset");		
+			  }
+			});
+		}
+	});
+
+	$('#btnEdit').on('click', function () {	
+        //console.log($("#iduser").val());	
+		$.ajax({
+			type: 'POST',
+			dataType: 'json', 
+			async: false,
+			url: 'core/user/user_db.php?action=edt&id='+$("#iduser").val(),
+			data: $('#frmuser').serialize(),
+			success: function (response) {
+				if (response.success == true){	
+					$("#alertsucess").append("Registro alterado com sucesso!");
+					$('#alertsucess').show();
+				}else{
+					$("#alerterror").append("Erro ao alterar registro!");
+					$('#alerterror').show();  
+				}
 			}
-			$('#frmuser').trigger("reset");
-		  },
-		  error: function(response) {
-			$("#alerterror").append("Erro ao inserir registro!");
-			$('#alerterror').show();  
-			$('#frmuser').trigger("reset");		
-		  }
-		});
-	}
-  });
+		});			
+	}); 
 
 });

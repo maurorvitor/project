@@ -17,7 +17,7 @@
 	</table>				
 	</div>
 </div>
-
+<input id="iduser" type="hidden">
 <div id="myModal" class="modal fade " role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog">
 	<!-- Modal content-->

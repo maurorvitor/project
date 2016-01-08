@@ -40,7 +40,8 @@ function table_update($table, $fields, $pk){
 		}	
 	}	
 	
-	$sql = " update $table set $values where($keys) ";     
+	$sql = " update $table set $values where($keys) ";  
+    //return $sql;	
 	include 'conection.php';
 	return  mysqli_query($linkbase, $sql);    
 	mysqli_close($linkbase);  
@@ -79,6 +80,7 @@ function table_select($table, $fields = '*', $pk = array(), $order = ''){
 	}	
 	$sql = " select $fields from $table $keys $order";     
 	include 'conection.php';
+	//echo $sql;
 	return  mysqli_query($linkbase, $sql);    
 	mysqli_close($linkbase);  
 }

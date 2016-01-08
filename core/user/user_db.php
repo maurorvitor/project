@@ -38,4 +38,34 @@
 		$data['data'] = $linhas;				
 	    echo json_encode($data);
 	}
+	if ($action == 'sel'){
+	    $id = 0;
+		if (isset($_GET['id'])){
+		  $id = $_GET['id']; 
+		}	
+		$result = table_select($table,'nome,email,login',array('iduser'=>$id));
+        $row = mysqli_fetch_object($result);
+	    echo json_encode($row);
+	}	
+	
+	if ($action == 'edt'){
+	    $id = 0;
+		if (isset($_GET['id'])){
+		  $id = $_GET['id']; 
+		}
+		$values = array();
+		
+		foreach ($_POST as $key => $value) {
+			if(strpos($key,'ig_')===false){
+				$values[$key] = $value;
+			}		
+		}		
+		//echo table_update($table, $values, array('iduser'=>$id));
+		if(table_update($table, $values, array('iduser'=>$id)) == true){
+        	$response = array("success" => true);	
+		}else{
+			$response = array("success" => false);	
+		}
+	    echo json_encode($response);
+	}	
 ?>
