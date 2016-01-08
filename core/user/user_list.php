@@ -18,16 +18,15 @@
 	</div>
 </div>
 
-<div id="myModal" class="modal fade bs-example-modal-lg" role="dialog" aria-labelledby="myLargeModalLabel">
-  <div class="modal-dialog modal-lg">
+<div id="myModal" class="modal fade " role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog">
 	<!-- Modal content-->
 	<div class="modal-content">			
 	  <div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal">&times;</button>						
 	  </div>
 	  
-	  <div class="modal-body">
-		<?php  include 'user_view.php';  ?>
+	  <div class="modal-body" id="content-modal">		
 	  </div>
 	  
 	  <div class="modal-footer">

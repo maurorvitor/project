@@ -1,7 +1,30 @@
 
  $(document).ready(function(){
-	$('#dbguser').DataTable({
+	var table = $('#dbguser').DataTable({
         "ajax": "core/user/user_insert.php?action=list",
+		dom: 'Bfrtip',
+        buttons: [
+            {
+                extend:    'copyHtml5',
+                text:      '<span class="glyphicon glyphicon-copy" aria-hidden="true"></span>',
+                titleAttr: 'Copiar'
+            },
+            {
+                extend:    'excelHtml5',
+                text:      '<span class="glyphicon glyphicon-th" aria-hidden="true"></span>',
+                titleAttr: 'Excel'
+            },
+            {
+                extend:    'pdfHtml5',
+                text:      '<span class="glyphicon glyphicon-file" aria-hidden="true"></span>',
+                titleAttr: 'PDF'
+            },
+            {
+                extend:    'print',
+                text:      '<span class="glyphicon glyphicon-print" aria-hidden="true"></span>',
+                titleAttr: 'Imprimir'
+            }			
+        ],		
         "columns": [
 			{
                 "className":      'btngrid',
@@ -29,6 +52,7 @@
 		"paging":   true,
 		"ordering": true,
 		"info":     true,
+		"retrieve": true,
 		"pageLength": 5,
 		"lengthChange": false,
 			"language": {
@@ -54,11 +78,48 @@
 		//console.log($('#dbguser > tbody > tr'));	
 		var col = $(this).parent().children().index($(this));
 		var row = $(this).parent().parent().children().index($(this).parent());
-        console.log('Row: ' + row + ', Column: ' + col);
-		var table = $('#dbguser').DataTable();
-		console.log(table.row(table.row(row)).data().iduser);	
+        //console.log('Row: ' + row + ', Column: ' + col);
+		//var table = $('#dbguser').DataTable();
+		//console.log(table.row(table.row(row)).data().iduser);
+		var iduser = table.row(table.row(row)).data().iduser;
+		var urluser = '';
+		if (col == 0){
+			urluser = 'core/user/user_view.php?page=view';
+		}else
+		if (col == 1){
+			urluser = 'core/user/user_view.php?page=edt';
+		}else
+		if (col == 2){
+			urluser = 'core/user/user_view.php?page=del';
+		}else{
+		  return;
+		} 
+		$.ajax({
+		  type: 'GET',
+		  dataType: 'html', 		  
+		  url: urluser,		  
+		  success: function (response) {
+			//console.log(response);
+			// if (response.success == true){	
+				// $("#alertsucess").append("Registro inserido com sucesso!");
+				// $('#alertsucess').show();
+			// }else{
+				// $("#alerterror").append("Erro ao inserir registro!");
+				// $('#alerterror').show();  
+			// }
+			// $('#frmuser').trigger("reset");
+			$("#content-modal").html(response);
+		  },
+		  error: function(response) {
+			// $("#alerterror").append("Erro ao inserir registro!");
+			// $('#alerterror').show();  
+			// $('#frmuser').trigger("reset");		
+		  }
+		  
+		});			
+        		
 		$('#myModal').modal('show');	
-	} );	
+	});	
   
   $('#frmuser').validator().on('submit', function (e) {
     validou = e.isDefaultPrevented();  
