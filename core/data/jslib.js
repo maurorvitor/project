@@ -1,15 +1,15 @@
 function error(vmensagem){
-	$("#alerterror").append(vmensagem);
+	$("#alerterror > span").html(vmensagem);
 	$('#alerterror').show();
 }
 
 
 function mensagem(vresponse){
 	if (vresponse.success == true){	
-		$("#alertsucess").append(vresponse.mensage);
+		$("#alertsucess > span").html(vresponse.mensage);
 		$('#alertsucess').show();
 	}else{
-		$("#alerterror").append(vresponse.mensage);
+		$("#alerterror > span").html(vresponse.mensage);
 		$('#alerterror').show();  
 	}
 }

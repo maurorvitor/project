@@ -20,7 +20,37 @@
 <script src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.print.min.js"></script>
 <script src="core/data/jslib.js"></script>
 <?php
-  include 'core/login/login.php';
+	$page = '';
+	
+	if (isset($_GET['page'])){
+		$page = $_GET['page']; 
+	
+		if (logado()){
+			switch ($page) {
+				case "userv":
+					include 'core/user/user_view.php';
+					break;
+				case "userl":
+					include 'core/user/user_list.php';
+					break;									
+			}	
+		}else{
+			switch ($page) {
+				case "login":
+					include 'core/login/login.php';
+					break;
+				default :
+					include 'naopermitido.php';
+			}
+		}	
+	}else{	
+		if (logado()){
+			include 'permitido.php';
+		}else{
+			include 'naopermitido.php';
+		}
+	}	
+	//include 'core/user/user_list.php';
 // //code.jquery.com/jquery-1.11.3.min.js
 // https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js
 // https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js

@@ -4,6 +4,13 @@
         "ajax": "core/user/user_db.php?action=list",
 		dom: 'Bfrtip',
         buttons: [
+			{
+                text: '<a class="btn btn-success" href="#" role="button">Novo</a>',
+				titleAttr: 'Novo',
+                action: function ( e, dt, node, config ) {
+                    window.location.replace("index.php?page=userv");
+                }
+            },		
             {
                 extend:    'copyHtml5',
                 text:      '<span class="glyphicon glyphicon-copy" aria-hidden="true"></span>',
@@ -23,7 +30,7 @@
                 extend:    'print',
                 text:      '<span class="glyphicon glyphicon-print" aria-hidden="true"></span>',
                 titleAttr: 'Imprimir'
-            }			
+            }						
         ],		
         "columns": [
 			{
