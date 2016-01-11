@@ -88,58 +88,20 @@
 			});
 		});	
 		$('#myModal').modal('show');	
-		//console.log(iduser);
         $("#iduser").val(iduser);		
 		
 	});	
 	
 	$('#frmuser').validator().on('submit', function (e) {
-		validou = e.isDefaultPrevented();  
-		e.preventDefault();        
-		if (validou != true) { 		
-			$.ajax({
-			  type: 'POST',
-			  dataType: 'json', 
-			  async: false,
-			  url: 'core/user/user_db.php?action=insert',
-			  data: $('#frmuser').serialize(),
-			  success: function (response) {			
-				if (response.success == true){	
-					$("#alertsucess").append("Registro inserido com sucesso!");
-					$('#alertsucess').show();
-				}else{
-					$("#alerterror").append("Erro ao inserir registro!");
-					$('#alerterror').show();  
-				}
-				$('#frmuser').trigger("reset");
-			  },
-			  error: function(response) {
-				$("#alerterror").append("Erro ao inserir registro!");
-				$('#alerterror').show();  
-				$('#frmuser').trigger("reset");		
-			  }
-			});
-		}
+	    Inserir(e, 'core/user/user_db.php?action=insert', '#frmuser');
 	});
 
 	$('#btnEdit').on('click', function () {	
-        //console.log($("#iduser").val());	
-		$.ajax({
-			type: 'POST',
-			dataType: 'json', 
-			async: false,
-			url: 'core/user/user_db.php?action=edt&id='+$("#iduser").val(),
-			data: $('#frmuser').serialize(),
-			success: function (response) {
-				if (response.success == true){	
-					$("#alertsucess").append("Registro alterado com sucesso!");
-					$('#alertsucess').show();
-				}else{
-					$("#alerterror").append("Erro ao alterar registro!");
-					$('#alerterror').show();  
-				}
-			}
-		});			
+	    editar('core/user/user_db.php?action=edt&id='+$("#iduser").val(), '#frmuser');
 	}); 
+	
+	$('#btnDelete').on('click', function () {	
+	    apagar('core/user/user_db.php?action=del&id='+$("#iduser").val());
+	});	
 
 });

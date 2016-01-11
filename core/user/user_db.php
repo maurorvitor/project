@@ -6,23 +6,33 @@
 	if (isset($_GET['action'])){
 	  $action = $_GET['action']; 
 	}
+	
+	$id = 0;
+	if (isset($_GET['id'])){
+	  $id = $_GET['id']; 
+	}
+	
+	$values = array();	
+	foreach ($_POST as $key => $value) {
+		if(strpos($key,'ig_')===false){
+			$values[$key] = $value;
+		}		
+	}	
+	
+	$response = array();
+	
 	if ($action == 'insert'){
-		$values = array();
-		
-		foreach ($_POST as $key => $value) {
-			if(strpos($key,'ig_')===false){
-				$values[$key] = $value;
-			}		
-		}
 		$values['dtcriacao'] = date ("Y-m-d H:i:s", time());
 		$values['senha'] = md5($values['senha']);
 		
 		//$date = "'".date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $_POST['date'])))."'";
 		
 		if (table_insert($table, $values) == true){
-			$response = array("success" => true);	
+			$response['success'] = true;	
+			$response['mensage'] = 'Registro Inserido com Sucesso!';	
 		}else{
-			$response = array("success" => false);	
+			$response['success'] = false;
+			$response['mensage'] = 'Erro ao inserir registro!'.mysqli_error($linkbase);				
 		}	
 
 		echo json_encode($response);  
@@ -39,32 +49,30 @@
 	    echo json_encode($data);
 	}
 	if ($action == 'sel'){
-	    $id = 0;
-		if (isset($_GET['id'])){
-		  $id = $_GET['id']; 
-		}	
 		$result = table_select($table,'nome,email,login',array('iduser'=>$id));
         $row = mysqli_fetch_object($result);
 	    echo json_encode($row);
 	}	
 	
-	if ($action == 'edt'){
-	    $id = 0;
-		if (isset($_GET['id'])){
-		  $id = $_GET['id']; 
-		}
-		$values = array();
-		
-		foreach ($_POST as $key => $value) {
-			if(strpos($key,'ig_')===false){
-				$values[$key] = $value;
-			}		
-		}		
+	if ($action == 'edt'){	
 		//echo table_update($table, $values, array('iduser'=>$id));
 		if(table_update($table, $values, array('iduser'=>$id)) == true){
-        	$response = array("success" => true);	
+        	$response['success'] = true;
+			$response['mensage'] = 'Registro alterado com Sucesso!';				
 		}else{
-			$response = array("success" => false);	
+			$response['success'] = false;
+			$response['mensage'] = 'Erro ao alterar registro!'.mysqli_error($linkbase);				
+		}
+	    echo json_encode($response);
+	}	
+	
+	if ($action == 'del'){
+		if(table_delete($table, array('iduser'=>$id)) == true){
+        	$response['success'] = true;
+			$response['mensage'] = 'Registro apagado com Sucesso!';				
+		}else{
+			$response['success'] = false;
+		    $response['mensage'] = 'Erro ao apagar Registro!'.mysqli_error($linkbase);				
 		}
 	    echo json_encode($response);
 	}	
