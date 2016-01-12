@@ -8,9 +8,7 @@
 <script src="bootstrap/js/bootstrap.min.js"></script>	
 <script src="bootstrap/js/validator.js"></script>	
 <script src="datatables/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js"></script>	
-
-
+<script src="https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.1.0/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
@@ -19,6 +17,7 @@
 <script src="js/buttons.html5.min.js"></script>             
 <script src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.print.min.js"></script>
 <script src="core/data/jslib.js"></script>
+<script src="mask/jquery.mask.min.js"></script>
 <?php
 	$page = '';
 	//echo md5('123456');
@@ -27,12 +26,15 @@
 	
 		if (logado()){
 			switch ($page) {
-				case "userv":
-					include 'core/user/user_view.php';
+				case "userc":
+					include 'core/user/user_cad.php';
 					break;
 				case "userl":
 					include 'core/user/user_list.php';
-					break;									
+					break;
+				case "uni":
+					include 'core/unidade/unidade_cad.php';
+					break;					
 			}	
 		}else{
 			switch ($page) {
@@ -50,7 +52,7 @@
 			include 'naopermitido.php';
 		}
 	}	
-	// include 'core/user/user_list.php';
+	//include 'core/user/user_list.php';
 // //code.jquery.com/jquery-1.11.3.min.js
 // https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js
 // https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js

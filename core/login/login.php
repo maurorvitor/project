@@ -1,4 +1,32 @@
-<script type="text/javascript" src="core/login/login.js" charset="utf-8" ></script>
+<script type="text/javascript">
+ $(document).ready(function(){	
+    $('#btnLogin').on('click', function () {	
+	    $('#frmlogin').validator('validate');
+		if ($('.has-error').length == 0) { 	
+			$.ajax({
+				type: 'POST',
+				dataType: 'json', 
+				async: false,
+				url: 'core/login/logar.php',
+				data: $('#frmlogin').serialize(),
+				success: function (response) {	
+					//console.log(response);				
+					if (response.success == true){	
+						$("#alertsucess > span").html(response.mensage);
+						$('#alertsucess').show();
+						window.location.replace("index.php");
+					}else{
+						$("#alerterror > span").html(response.mensage);
+						$('#alerterror').show();  
+					}
+					$('#frmlogin').trigger("reset");
+				}
+			});
+		}	    
+	});
+});
+
+</script>
 
 <div class="alert alert-success" style="display: none" id="alertsucess">
   <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>

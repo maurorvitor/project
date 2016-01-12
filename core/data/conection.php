@@ -1,12 +1,14 @@
 <?php
-header('Content-Type: text/html; charset=utf-8');
+//header('Content-Type: text/html; charset=utf-8');
 
 include 'constants.php';
 
-$linkbase = mysqli_connect(SERVER,USER,PASSWORD,DATABASE);
+function linkbase(){
+	return mysqli_connect(SERVER,USER,PASSWORD,DATABASE);
 
-if (mysqli_connect_errno()){
-  echo "Não foi possível conectar a base de dados: " . mysqli_connect_error();
-}
+	if (mysqli_connect_errno()){
+		echo "Não foi possível conectar a base de dados: " . mysqli_connect_error();		
+	}
+}	
 
 ?>

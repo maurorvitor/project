@@ -1,5 +1,7 @@
 <?php
 
+include 'conection.php';
+
 function table_insert($table, $fields){
 	$keys = '';
 	$values = '';
@@ -16,10 +18,11 @@ function table_insert($table, $fields){
 		}		
 	}
 	$sql = " insert into $table($keys)values($values)";     
-	include 'conection.php';
-	return  mysqli_query($linkbase, $sql);    
-	mysqli_close($linkbase);
+	//include 'conection.php';
+	return  mysqli_query(linkbase(), $sql);    
+	//mysqli_close($linkbase);
 	//echo $sql;
+	
 }
 
 function table_update($table, $fields, $pk){
@@ -42,9 +45,9 @@ function table_update($table, $fields, $pk){
 	
 	$sql = " update $table set $values where($keys) ";  
     //return $sql;	
-	include 'conection.php';
-	return  mysqli_query($linkbase, $sql);    
-	mysqli_close($linkbase);  
+	//include 'conection.php';
+	return  mysqli_query(linkbase(), $sql);    
+	//mysqli_close($linkbase);  
 }
 
 function table_delete($table, $pk){
@@ -57,9 +60,9 @@ function table_delete($table, $pk){
 		}	
 	}	
 	$sql = " delete from $table where($keys) ";     
-	include 'conection.php';
-	return  mysqli_query($linkbase, $sql);    
-	mysqli_close($linkbase); 
+	//include 'conection.php';
+	return  mysqli_query(linkbase(), $sql);    
+	//mysqli_close($linkbase); 
     	
 }
 
@@ -79,10 +82,10 @@ function table_select($table, $fields = '*', $pk = array(), $order = ''){
 		$order = " order by $order";
 	}	
 	$sql = " select $fields from $table $keys $order";     
-	include 'conection.php';
+	//include 'conection.php';
 	//echo $sql;
-	return  mysqli_query($linkbase, $sql);    
-	mysqli_close($linkbase);  
+	return  mysqli_query(linkbase(), $sql);    
+	//mysqli_close($linkbase); 
 }
 
 function format_date($linhas, $coluna){	

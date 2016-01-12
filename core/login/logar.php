@@ -15,7 +15,7 @@
 	
 	if (mysqli_num_rows($result) == 0){
 		$response['success'] = false;
-		$response['mensage'] = 'Login não encontrado!'.mysqli_error($linkbase);			
+		$response['mensage'] = 'Login não encontrado!';			
 	}else{
 		$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 		if (md5($values['senha']) != $row['senha']){
@@ -30,8 +30,9 @@
 			$_SESSION['nome']   = $row['nome'];
 			$_SESSION['email']  = $row['email'];			
 			
-			table_update($table, array('tdultacesso'=>date("Y-m-d H:i:s", time())), array('iduser'=>$iduser));
+			table_update($table, array('tdultacesso'=>date("Y-m-d H:i:s", time())), array('iduser'=>$row['iduser']));
 		}
-	}	
+	}
+    //print_r($response);	
 	echo json_encode($response);		
 ?>
