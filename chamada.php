@@ -21,7 +21,7 @@
 <script src="core/data/jslib.js"></script>
 <?php
 	$page = '';
-	
+	//echo md5('123456');
 	if (isset($_GET['page'])){
 		$page = $_GET['page']; 
 	
@@ -50,10 +50,28 @@
 			include 'naopermitido.php';
 		}
 	}	
-	//include 'core/user/user_list.php';
+	// include 'core/user/user_list.php';
 // //code.jquery.com/jquery-1.11.3.min.js
 // https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js
 // https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js
 
   //<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js" charset="utf-8"></script>	
 ?>
+
+<div id="myModal" class="modal fade " role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog">
+	<!-- Modal content-->
+	<div class="modal-content">			
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal">&times;</button>						
+	  </div>
+	  
+	  <div class="modal-body" id="content-modal">		
+	  </div>
+	  
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+	  </div>			  
+	</div>
+  </div>
+</div>	

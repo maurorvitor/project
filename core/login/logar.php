@@ -1,4 +1,5 @@
 <?php
+
 	include '../data/dblib.php';
 	$table = 'user';
 	
@@ -28,6 +29,8 @@
 			$_SESSION['iduser'] = $row['iduser'];
 			$_SESSION['nome']   = $row['nome'];
 			$_SESSION['email']  = $row['email'];			
+			
+			table_update($table, array('tdultacesso'=>date("Y-m-d H:i:s", time())), array('iduser'=>$iduser));
 		}
 	}	
 	echo json_encode($response);		

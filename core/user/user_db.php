@@ -22,6 +22,12 @@
 	$response = array();
 	
 	if ($action == 'insert'){
+	
+		if (isset($_FILES['image']) && $_FILES['image']['size'] > 0) {
+			$image = addslashes(file_get_contents($_FILES['image']['tmp_name'])); 
+			$values['image'] = $image;
+		}
+		
 		$values['dtcriacao'] = date ("Y-m-d H:i:s", time());
 		$values['senha'] = md5($values['senha']);
 		
@@ -38,8 +44,10 @@
 		echo json_encode($response);  
 	}
 	if ($action == 'list'){	
-		$result = table_select($table);		
+		$result = table_select($table,'iduser,nome,email,login,dtcriacao');		
 		while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+			//$row['image'] = base64_encode($row['image']);
+			//echo '<img src="data:image/png;base64,'.base64_encode($row['image']).'">';
 			$row['dtcriacao'] = date("d/m/Y H:i:s", strtotime($row['dtcriacao']));
 			$linhas[] = $row;
 		}
@@ -51,17 +59,27 @@
 	if ($action == 'sel'){
 		$result = table_select($table,'nome,email,login',array('iduser'=>$id));
         $row = mysqli_fetch_object($result);
+		//$row['image'] = base64_encode($row['image']);
 	    echo json_encode($row);
 	}	
 	
 	if ($action == 'edt'){	
-		//echo table_update($table, $values, array('iduser'=>$id));
+		if (isset($_FILES['image']) && $_FILES['image']['size'] > 0) {
+			$image = addslashes(file_get_contents($_FILES['image']['tmp_name'])); 
+			$values['image'] = $image;
+		}		
+		
+		//print_r($_FILES); 
+		
+		if (isset($values['senha'])){
+			$values['senha'] = md5($values['senha']);
+		}
 		if(table_update($table, $values, array('iduser'=>$id)) == true){
         	$response['success'] = true;
 			$response['mensage'] = 'Registro alterado com Sucesso!';				
 		}else{
 			$response['success'] = false;
-			$response['mensage'] = 'Erro ao alterar registro!'.mysqli_error($linkbase);				
+			$response['mensage'] = 'Erro ao alterar registro!';				
 		}
 	    echo json_encode($response);
 	}	

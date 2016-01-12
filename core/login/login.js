@@ -3,9 +3,9 @@
 	
     $('#btnLogin').on('click', function () {	
 	//$('#frmlogin').validator().on('submit', function (e) {
-	    
+	    $('#frmlogin').validator('validate');
 		var validou = $('.has-error').length;
-		console.log(validou);
+		//console.log(validou);
 		//e.preventDefault();        
 		if (validou == 0) { 	
 			$.ajax({

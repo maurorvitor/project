@@ -77,25 +77,26 @@
 		var iduser = table.row(table.row(row)).data().iduser;
 		var urluser = '';
 		if (col == 0){
-			urluser = 'core/user/user_view.php?page=view';
+			urluser = 'core/user/user_view.php?page=view&id='+iduser;
 		}else
 		if (col == 1){
-			urluser = 'core/user/user_view.php?page=edt';
+			urluser = 'core/user/user_view.php?page=edt&id='+iduser;
 		}else
 		if (col == 2){
-			urluser = 'core/user/user_view.php?page=del';
+			urluser = 'core/user/user_view.php?page=del&id='+iduser;
 		}else{
 		  return;
 		} 		
 		$("#content-modal").load(urluser);
-		
+		//console.log(iduser);
 		$.getJSON('core/user/user_db.php?action=sel&id='+iduser, function(result){
 			$.each(result, function(i, field){				
 				$("#"+i).val(field);
 			});
+			//console.log(result.image)
 		});	
 		$('#myModal').modal('show');	
-        $("#iduser").val(iduser);		
+        //$("#iduser").val(iduser);		
 		
 	});	
 	
@@ -104,7 +105,11 @@
 	});
 
 	$('#btnEdit').on('click', function () {	
-	    editar('core/user/user_db.php?action=edt&id='+$("#iduser").val(), '#frmuser');
+		$('#frmuser').validator('validate');
+		//console.log($('.has-error').length);
+		if ($('.has-error').length == 0){
+			editar('core/user/user_db.php?action=edt&id='+$("#iduser").val(), '#frmuser');
+		}	
 	}); 
 	
 	$('#btnDelete').on('click', function () {	

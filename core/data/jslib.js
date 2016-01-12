@@ -52,14 +52,25 @@ function apagar(vurl){
 }
 
 function editar(vurl, vidform){
+
+    // Serialize the form data
+    //var formData = $(vidform).serialize();
+
+    var formData = new FormData($(vidform)[0]);
+	
 	$.ajax({
 		type: 'POST',
 		dataType: 'json', 
 		async: false,
 		url: vurl,
-		data: $(vidform).serialize(),
+		data: formData,
+		cache: false,
+		//enctype: 'multipart/form-data',
+		processData: false,  // tell jQuery not to process the data
+		contentType: false,   // tell jQuery not to set contentType		
 		success: function (response) {
 			mensagem(response);
+			//console.log(response);
 		}
 	});	
 }
