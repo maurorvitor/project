@@ -2,7 +2,35 @@
 
 include 'conection.php';
 
-function table_insert($table, $fields){
+function tem_permissao($table, $tipo){	
+	
+}
+
+
+function table_replace($table, $fields){
+	$link = linkbase();
+	mysqli_set_charset($link, "utf8");
+	$keys = '';
+	$values = '';
+	foreach($fields as $key => $value){
+		if($keys != ''){
+			$keys = $keys.','.$key;
+		}else{
+			$keys = $keys.$key;
+		}
+		if($values != ''){
+			$values = $values.",'$value'";
+		}else{
+			$values = $values."'$value'";
+		}		
+	}
+	$sql = " replace into $table($keys)values($values)";     
+	return  mysqli_query($link, $sql);    	
+}
+
+function table_insert($table, $fields, &$id = 0, &$response = array()){
+	$link = linkbase();
+	mysqli_set_charset($link, "utf8");
 	$keys = '';
 	$values = '';
 	foreach($fields as $key => $value){
@@ -18,14 +46,21 @@ function table_insert($table, $fields){
 		}		
 	}
 	$sql = " insert into $table($keys)values($values)";     
-	//include 'conection.php';
-	return  mysqli_query(linkbase(), $sql);    
-	//mysqli_close($linkbase);
-	//echo $sql;
-	
+	$flag =  mysqli_query($link, $sql);   	
+	$id = mysqli_insert_id($link);	
+	if ($flag == true){
+		$response['success'] = true;	
+		$response['mensage'] = 'Registro Inserido com Sucesso!';
+	}else{
+		$response['success'] = false;
+		$response['mensage'] = 'Erro ao inserir registro!-'.mysqli_error($link);		
+	}	
+	return $flag;
 }
 
-function table_update($table, $fields, $pk){
+function table_update($table, $fields, $pk, &$response = array()){
+	$link = linkbase();
+	mysqli_set_charset($link, "utf8");
 	$keys = '';
 	$values = '';
 	foreach($fields as $key => $value){
@@ -42,15 +77,21 @@ function table_update($table, $fields, $pk){
 			$keys = $keys." $key = '$value' ";
 		}	
 	}	
-	
 	$sql = " update $table set $values where($keys) ";  
-    //return $sql;	
-	//include 'conection.php';
-	return  mysqli_query(linkbase(), $sql);    
-	//mysqli_close($linkbase);  
+	$flag = mysqli_query($link, $sql);    
+	if ($flag == true){
+		$response['success'] = true;	
+		$response['mensage'] = 'Registro Alterado com Sucesso!';
+	}else{
+		$response['success'] = false;
+		$response['mensage'] = 'Erro ao Alterar registro!-'.mysqli_error($link);		
+	}	
+	return  $flag;
 }
 
-function table_delete($table, $pk){
+function table_delete($table, $pk, &$response = array()){
+	$link = linkbase();
+	mysqli_set_charset($link, "utf8");
 	$keys = '';
 	foreach($pk as $key => $value){
 		if($keys != ''){
@@ -60,13 +101,20 @@ function table_delete($table, $pk){
 		}	
 	}	
 	$sql = " delete from $table where($keys) ";     
-	//include 'conection.php';
-	return  mysqli_query(linkbase(), $sql);    
-	//mysqli_close($linkbase); 
-    	
+	$flag = mysqli_query($link, $sql);    
+	if ($flag == true){
+		$response['success'] = true;	
+		$response['mensage'] = 'Registro Apagado com Sucesso!';
+	}else{
+		$response['success'] = false;
+		$response['mensage'] = 'Erro ao Apagar registro!-'.mysqli_error($link);		
+	}	
+	return  $flag;
 }
 
 function table_select($table, $fields = '*', $pk = array(), $order = ''){
+	$link = linkbase();
+	mysqli_set_charset($link, "utf8");
 	$keys = '';
 	foreach($pk as $key => $value){
 		if($keys != ''){
@@ -82,10 +130,7 @@ function table_select($table, $fields = '*', $pk = array(), $order = ''){
 		$order = " order by $order";
 	}	
 	$sql = " select $fields from $table $keys $order";     
-	//include 'conection.php';
-	//echo $sql;
-	return  mysqli_query(linkbase(), $sql);    
-	//mysqli_close($linkbase); 
+	return  mysqli_query($link, $sql);    
 }
 
 function format_date($linhas, $coluna){	
@@ -93,7 +138,6 @@ function format_date($linhas, $coluna){
 		if($key === $coluna){
 			$linhas[$key] = date("d/m/Y H:i:s", $linhas[$key]);
 		}
-		//print_r($value);
 	}
 	return $linhas;
 }

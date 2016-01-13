@@ -19,40 +19,40 @@
 <script src="core/data/jslib.js"></script>
 <script src="mask/jquery.mask.min.js"></script>
 <?php
-	$page = '';
-	//echo md5('123456');
-	if (isset($_GET['page'])){
-		$page = $_GET['page']; 
+	// $page = '';
+	// //echo md5('123456');
+	// if (isset($_GET['page'])){
+		// $page = $_GET['page']; 
 	
-		if (logado()){
-			switch ($page) {
-				case "userc":
-					include 'core/user/user_cad.php';
-					break;
-				case "userl":
-					include 'core/user/user_list.php';
-					break;
-				case "uni":
-					include 'core/unidade/unidade_cad.php';
-					break;					
-			}	
-		}else{
-			switch ($page) {
-				case "login":
-					include 'core/login/login.php';
-					break;
-				default :
-					include 'naopermitido.php';
-			}
-		}	
-	}else{	
-		if (logado()){
-			include 'permitido.php';
-		}else{
-			include 'naopermitido.php';
-		}
-	}	
-	//include 'core/user/user_list.php';
+		// if (logado()){
+			// switch ($page) {
+				// case "userc":
+					// include 'core/user/user_cad.php';
+					// break;
+				// case "userl":
+					// include 'core/user/user_list.php';
+					// break;
+				// case "uni":
+					// include 'core/unidade/unidade_cad.php';
+					// break;					
+			// }	
+		// }else{
+			// switch ($page) {
+				// case "login":
+					// include 'core/login/login.php';
+					// break;
+				// default :
+					// include 'naopermitido.php';
+			// }
+		// }	
+	// }else{	
+		// if (logado()){
+			// include 'permitido.php';
+		// }else{
+			// include 'naopermitido.php';
+		// }
+	// }	
+	include 'core/user/user_perm.php';
 // //code.jquery.com/jquery-1.11.3.min.js
 // https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js
 // https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js
