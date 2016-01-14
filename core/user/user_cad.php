@@ -39,14 +39,6 @@
 		<div class="panel-heading">Cadastro de Usuário</h4></div>
 		<div class="panel-body">
 			
-			<ul class="nav nav-tabs">
-				<li class="active"><a data-toggle="tab" href="#usuario">Usuário</a></li>
-				<li><a data-toggle="tab" href="#permissao">Permissão</a></li>
-			</ul>
-			
-			<div class="tab-content">
-				<div id="usuario" class="tab-pane fade in active">
-				<p>
 			<form class="form-horizontal" role="form" id="caduser" data-toggle="validator" method="post" enctype="multipart/form-data">
 			  <div class="form-group">
 				<label class="control-label col-sm-2" for="image"></label>
@@ -101,11 +93,6 @@
 			  </div>
 			  
 			</form>	
-			</div>
-			<div id="permissao" class="tab-pane fade">
-				
-			</div>
-		</div>
 		
 	  </div>
 	</div>	

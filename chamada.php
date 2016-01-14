@@ -16,43 +16,44 @@
 <script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
 <script src="js/buttons.html5.min.js"></script>             
 <script src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.print.min.js"></script>
+<script src="core/user/user.js"></script>
 <script src="core/data/jslib.js"></script>
 <script src="mask/jquery.mask.min.js"></script>
 <?php
-	// $page = '';
-	// //echo md5('123456');
-	// if (isset($_GET['page'])){
-		// $page = $_GET['page']; 
+	$page = '';
+	//echo md5('123456');
+	if (isset($_GET['page'])){
+		$page = $_GET['page']; 
 	
-		// if (logado()){
-			// switch ($page) {
-				// case "userc":
-					// include 'core/user/user_cad.php';
-					// break;
-				// case "userl":
-					// include 'core/user/user_list.php';
-					// break;
-				// case "uni":
-					// include 'core/unidade/unidade_cad.php';
-					// break;					
-			// }	
-		// }else{
-			// switch ($page) {
-				// case "login":
-					// include 'core/login/login.php';
-					// break;
-				// default :
-					// include 'naopermitido.php';
-			// }
-		// }	
-	// }else{	
-		// if (logado()){
-			// include 'permitido.php';
-		// }else{
-			// include 'naopermitido.php';
-		// }
-	// }	
-	include 'core/user/user_perm.php';
+		if (logado()){
+			switch ($page) {
+				case "userc":
+					include 'core/user/user_cad.php';
+					break;
+				case "userl":
+					include 'core/user/user_list.php';
+					break;
+				case "uni":
+					include 'core/unidade/unidade_cad.php';
+					break;					
+			}	
+		}else{
+			switch ($page) {
+				case "login":
+					include 'core/login/login.php';
+					break;
+				default :
+					include 'naopermitido.php';
+			}
+		}	
+	}else{	
+		if (logado()){
+			include 'permitido.php';
+		}else{
+			include 'naopermitido.php';
+		}
+	}	
+	//include 'core/user/user_perm.php';
 // //code.jquery.com/jquery-1.11.3.min.js
 // https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js
 // https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js
@@ -60,8 +61,8 @@
   //<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js" charset="utf-8"></script>	
 ?>
 
-<div id="myModal" class="modal fade " role="dialog" aria-labelledby="myLargeModalLabel">
-  <div class="modal-dialog">
+<div id="myModal" class="modal fade" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg">
 	<!-- Modal content-->
 	<div class="modal-content">			
 	  <div class="modal-header">

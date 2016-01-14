@@ -87,14 +87,9 @@
 		}else{
 		  return;
 		} 
-		//console.log(iduser);
+
 		$("#content-modal").load(urluser);
 		$('#myModal').modal('show');			
-		// $.getJSON('core/user/user_db.php?action=sel&id='+iduser, function(result){
-			// $.each(result, function(i, field){				
-				// $("#"+i).val(field);
-			// });
-		// });	
 	});	
 	
 	$("#myModal").on('hidden.bs.modal', function () {

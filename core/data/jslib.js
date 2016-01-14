@@ -3,6 +3,10 @@ function error(vmensagem){
 	$('#alerterror').show();
 }
 
+function mensagem(vmensagem){
+	$("#alertsucess > span").html(vmensagem);
+	$('#alertsucess').show();
+}
 
 function mensagem(vresponse){
 	if (vresponse.success == true){	

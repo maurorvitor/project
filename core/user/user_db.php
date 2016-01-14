@@ -33,14 +33,24 @@
 	
 	$response = array();
 	
+	if ($action == 'updperm'){
+		table_update('permissao', array('inserir'=>0, 'alterar'=>0, 'apagar'=>0, 'visualizar'=>0), array('iduser'=>$id));
+
+		foreach ($_POST as $key => $value) {
+		    $idperm = substr($key, 0, strpos($key, '-')); 
+			$campo = substr($key, strpos($key, '-')+1);			
+			table_update('permissao', array($campo=>$value), array('idpermissao'=>$idperm));
+		}	 
+	}
+	
 	if ($action == 'perm'){		
 		$result = table_select('permissao','idpermissao,descricao,inserir,alterar,apagar,visualizar',array('iduser'=>$id));		
 		while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
-		    $row['inserir'] = '<input type="checkbox" '.(($row['inserir'] == 1)?'checked':'').' id="'.$row['idpermissao'].'-inserir" name="'.$row['idpermissao'].'-inserir">';
-		    $row['alterar'] = '<input type="checkbox" '.(($row['alterar'] == 1)?'checked':'').' id="'.$row['idpermissao'].'-alterar" name="'.$row['idpermissao'].'-alterar">';
-		    $row['apagar'] = '<input type="checkbox" '.(($row['apagar'] == 1)?'checked':'').'   id="'.$row['idpermissao'].'-apagar"  name="'.$row['idpermissao'].'-apagar">';
-		    $row['visualizar'] = '<input type="checkbox" '.(($row['visualizar'] == 1)?'checked':'').' id="'.$row['idpermissao'].'-visualizar" name="'.$row['idpermissao'].'-visualizar">';		
-			$row['idpermissao'] = '<input id="'.$row['idpermissao'].'-id" name"'.$row['idpermissao'].'-id" type="hidden" value="'.$row['idpermissao'].'">';
+		    $row['inserir']    = '<input style="cursor:pointer" value="1" type="checkbox" '.(($row['inserir'] == 1)?'checked':'').' id="'.$row['idpermissao'].'-inserir" name="'.$row['idpermissao'].'-inserir">';
+		    $row['alterar']    = '<input style="cursor:pointer" value="1" type="checkbox" '.(($row['alterar'] == 1)?'checked':'').' id="'.$row['idpermissao'].'-alterar" name="'.$row['idpermissao'].'-alterar">';
+		    $row['apagar']     = '<input style="cursor:pointer" value="1" type="checkbox" '.(($row['apagar'] == 1)?'checked':'').'   id="'.$row['idpermissao'].'-apagar"  name="'.$row['idpermissao'].'-apagar">';
+		    $row['visualizar'] = '<input style="cursor:pointer" value="1" type="checkbox" '.(($row['visualizar'] == 1)?'checked':'').' id="'.$row['idpermissao'].'-visualizar" name="'.$row['idpermissao'].'-visualizar">';		
+			//$row['idpermissao'] = '<input id="'.$row['idpermissao'].'-id" name"'.$row['idpermissao'].'-id" type="hidden" value="'.$row['idpermissao'].'">';
 			$linhas[] = $row;
 		}
 		$data = array();
@@ -70,7 +80,7 @@
 			$image = addslashes(file_get_contents($_FILES['image']['tmp_name'])); 
 			$values['image'] = $image;
 		}		
-		$values['dtcriacao'] = date ("Y-m-d H:i:s", time());
+		$values['dtcriacao'] = date("Y-m-d H:i:s", time());
 		$values['senha'] = md5($values['senha']);		
 		//$date = "'".date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $_POST['date'])))."'";
 		

@@ -1,7 +1,8 @@
 <script type="text/javascript">
  $(document).ready(function(){
-	var table = $('#dbgperm').DataTable({
-        "ajax": "core/user/user_db.php?action=perm&id=83",	
+    var id = $("#iduser").val();
+	var tablep = $('#dbgperm').DataTable({
+        "ajax": "core/user/user_db.php?action=perm&id="+id,	
 		dom: 'Bfrtip',
         buttons: [
 			{
@@ -32,17 +33,31 @@
 	});
 	
 	$('#btnPerm').click( function() {
-		var data = table.$('input').serialize();
-		console.log(data.substr( 0, 120 ));
+		var dadosp = tablep.$('input').serialize();
+		//var id = 83;
+		//console.log(dados);
+		$.ajax({
+			type: 'POST',
+			dataType: 'json', 
+			async: false,
+			url: 'core/user/user_db.php?action=updperm&id='+id,
+			data: dadosp,
+			success: function () {
+				mensagem('Permissão Salva!');
+			},
+			error: function () {
+				error('Erro ao Salvar Permissão!');
+			}
+		});		
 		return false;
 	});	
 });
 </script>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h4>Consulta de Usuários</h4></div>
+	<div class="panel-heading"><h4>Permissões do Usuário</h4></div>
 	<div class="panel-body">	
-	<table id="dbgperm" class="table table-hover table-striped table-bordered" cellspacing="1" width="100%">
+	<table id="dbgperm" class="table table-hover table-striped table-bordered" cellspacing="0" width="100%">
 		<thead>
 			<tr>
 				<th>Tela</th>
