@@ -2,8 +2,34 @@
 
 include 'conection.php';
 
-function tem_permissao($table, $tipo){	
-	
+function tem_permissao($table, $tipo, &$response = array(), $verifica){	
+	$permissao = true;
+	if ($verifica == true){
+		switch ($tipo) {
+			case "inserir":
+				$result = table_select('permissao','inserir',array('tabela'=>$table,'iduser'=>$id));
+				$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+				$permissao =  (($row['inserir']==1)?true:false);
+				break;
+			case "alterar":
+				$result = table_select('permissao','alterar',array('tabela'=>$table,'iduser'=>$id));
+				$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+				$permissao = (($row['alterar']==1)?true:false);
+				break;
+			case "apagar":
+				$result = table_select('permissao','apagar',array('tabela'=>$table,'iduser'=>$id));
+				$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+				$permissao = (($row['inserir']==1)?true:false);
+				break;					
+		}
+		if ($permissao == false){
+			$response['success'] = false;
+			$response['mensage'] = 'Usuário sem premissão de realizar ação!-';		
+		}
+		return $permissao;
+	}else{
+		return $permissao;
+	}
 }
 
 
@@ -28,7 +54,7 @@ function table_replace($table, $fields){
 	return  mysqli_query($link, $sql);    	
 }
 
-function table_insert($table, $fields, &$id = 0, &$response = array()){
+function table_insert($table, $fields, &$id = 0, &$response = array(), $verifica_permissao = true){
 	$link = linkbase();
 	mysqli_set_charset($link, "utf8");
 	$keys = '';
@@ -46,16 +72,20 @@ function table_insert($table, $fields, &$id = 0, &$response = array()){
 		}		
 	}
 	$sql = " insert into $table($keys)values($values)";     
-	$flag =  mysqli_query($link, $sql);   	
-	$id = mysqli_insert_id($link);	
-	if ($flag == true){
-		$response['success'] = true;	
-		$response['mensage'] = 'Registro Inserido com Sucesso!';
+ 	if (tem_permissao($table, 'inserir', $response, $verifica_permissao) == true){
+		$flag =  mysqli_query($link, $sql);  
+		$id = mysqli_insert_id($link);	
+		if ($flag == true){
+			$response['success'] = true;	
+			$response['mensage'] = 'Registro Inserido com Sucesso!';
+		}else{
+			$response['success'] = false;
+			$response['mensage'] = 'Erro ao inserir registro!-'.mysqli_error($link);		
+		}	
+		return $flag;
 	}else{
-		$response['success'] = false;
-		$response['mensage'] = 'Erro ao inserir registro!-'.mysqli_error($link);		
-	}	
-	return $flag;
+		return false;
+	}
 }
 
 function table_update($table, $fields, $pk, &$response = array()){

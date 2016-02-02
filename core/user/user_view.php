@@ -1,103 +1,39 @@
 <script type="text/javascript">
-		// $("#myModal").on('shown.bs.modal', function () {
-				// alert('Teste');
-		// });	
-
-
+$(document).ready(function(){			
+	var id = $("#iduser").val();
 	
-	// $(document).ready(function(){	
+	$('#btnEdit').on('click', function () {	
+		$('#frmuser').validator('validate');
+		if ($('.has-error').length == 0){
+			var formData = new FormData($('#frmuser')[0]);
+			$.ajax({
+				type: 'POST',
+				dataType: 'json', 
+				async: false,
+				url: 'core/user/user_db.php?action=edt&id='+id,
+				data: formData,
+				processData: false,  
+				contentType: false,				
+				success: function (response) {			
+					mensagem(response);					
+				}
+			});				
+		}	
+	}); 
+	
+	$('#btnDelete').on('click', function () {	
+		$.ajax({
+			type: 'POST',
+			dataType: 'json', 
+			async: false,
+			url: 'core/user/user_db.php?action=del&id='+id,
+			success: function (response) {
+				mensagem(response);
+			}			
+		});	
+	});	
+});
 
-		// var id = $("#iduser").val();
-		
-		// var tablep = $('#dbgperm').DataTable({
-			// "ajax": "core/user/user_db.php?action=perm&id="+id,	
-			// dom: 'Bfrtip',
-			// buttons: [
-				// {
-					// text: '<a class="btn btn-primary" href="#" role="button" id="btnPerm">Salvar</a>',
-					// titleAttr: 'Salvar'
-				// }],		
-			// "columns": [		
-				// { "data": "descricao" },
-				// { "data": "inserir" },
-				// { "data": "alterar" },
-				// { "data": "apagar" },
-				// { "data": "visualizar" }
-			// ],	
-			// "paging":   false,
-			// "ordering": false,
-			// "info":     false,
-			// "retrieve": false,
-			// "scrollY": "200px",
-			// "pageLength": 5,
-			// "lengthChange": false,
-				// "language": {
-				// "lengthMenu": "Mostrar _MENU_ registros por página",
-				// "zeroRecords": "Zero registro encontrado",
-				// "info": "Página _PAGE_ de _PAGES_",
-				// "Previous": "Anterior",
-				// "infoEmpty": "Nenhum Registro Encontrado",
-				// "infoFiltered": "(Filtrados de _MAX_ registros)"}							
-		// });
-		
-		// $('#btnPerm').click( function() {
-			// var dadosp = tablep.$('input').serialize();
-			// //var id = 83;
-			// //console.log(dados);
-			// $.ajax({
-				// type: 'POST',
-				// dataType: 'json', 
-				// async: false,
-				// url: 'core/user/user_db.php?action=updperm&id='+id,
-				// data: dadosp,
-				// success: function () {
-					// mensagem('Permissão Salva!');
-				// },
-				// error: function () {
-					// error('Erro ao Salvar Permissão!');
-				// }
-			// });		
-			// return false;
-		// });		
-		
-		// $.getJSON('core/user/user_db.php?action=sel&id='+id, function(result){
-			// $.each(result, function(i, field){				
-				// $("#frmuser #"+i).val(field);
-			// });
-		// });	
-		
-		// $('#btnEdit').on('click', function () {	
-			// $('#frmuser').validator('validate');
-			// if ($('.has-error').length == 0){
-				// var formData = new FormData($('#frmuser')[0]);
-				// $.ajax({
-					// type: 'POST',
-					// dataType: 'json', 
-					// async: false,
-					// url: 'core/user/user_db.php?action=edt&id='+id,
-					// data: formData,
-					// processData: false,  
-					// contentType: false,				
-					// success: function (response) {			
-						// mensagem(response);					
-					// }
-				// });				
-			// }	
-		// }); 
-		
-		// $('#btnDelete').on('click', function () {	
-			// $.ajax({
-				// type: 'POST',
-				// dataType: 'json', 
-				// async: false,
-				// url: 'core/user/user_db.php?action=del&id='+id,
-				// success: function (response) {
-					// mensagem(response);
-				// }			
-			// });	
-		// });			
-		
-	// });
 </script>
 <div class="alert alert-success" style="display: none" id="alertsucess">
 	<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -146,15 +82,15 @@
 		
 		<?php echo (($view or $del) ? 
 		'<img src="'.$image.'" class="img-circle" id="imguser" alt="Usuário" width="64" height="64" >':''); ?> 
-		
-		<ul class="nav nav-tabs">
+		<?php echo (($edt) ?
+		'<ul class="nav nav-tabs">
 			<li class="active"><a data-toggle="tab" href="#usuario">Usuário</a></li>
 			<li><a data-toggle="tab" href="#permissao">Permissão</a></li>
 		</ul>
 		
 		<div class="tab-content">
 			<div id="usuario" class="tab-pane fade in active">
-				<p>			
+				<p>	':''); ?>		
 					
 					<form class="form-horizontal" role="form" id="frmuser" data-toggle="validator" method="post" enctype="multipart/form-data">
 						
@@ -219,9 +155,9 @@
 						</div>
 						
 					</form>	
-				</div>
+				<?php echo (($edt) ? '	
+				</div>				
 				<div id="permissao" class="tab-pane fade">
-					<?php //include 'user_perm.php';?>
 					<div class="panel panel-default">
 						<div class="panel-heading"><h4>Permissões do Usuário</h4></div>
 						<div class="panel-body">	
@@ -239,7 +175,8 @@
 						</div>
 					</div>					
 				</div>
-			</div>			
+			</div>	':'');?>
+			
 		</div>
 	</div>	
 	

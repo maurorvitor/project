@@ -39,8 +39,10 @@
 		foreach ($_POST as $key => $value) {
 		    $idperm = substr($key, 0, strpos($key, '-')); 
 			$campo = substr($key, strpos($key, '-')+1);			
-			table_update('permissao', array($campo=>$value), array('idpermissao'=>$idperm));
-		}	 
+			table_update('permissao', array($campo=>$value), array('idpermissao'=>$idperm));			
+		}
+		$response['sucess'] = true;
+		echo json_encode($response); 
 	}
 	
 	if ($action == 'perm'){		

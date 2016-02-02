@@ -16,7 +16,6 @@
 <script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
 <script src="js/buttons.html5.min.js"></script>             
 <script src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.print.min.js"></script>
-<script src="core/user/user.js"></script>
 <script src="core/data/jslib.js"></script>
 <script src="mask/jquery.mask.min.js"></script>
 <?php
@@ -62,7 +61,7 @@
 ?>
 
 <div id="myModal" class="modal fade" role="dialog" aria-labelledby="myLargeModalLabel">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog">
 	<!-- Modal content-->
 	<div class="modal-content">			
 	  <div class="modal-header">

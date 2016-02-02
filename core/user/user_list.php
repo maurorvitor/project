@@ -3,6 +3,7 @@
 	var table = $('#dbguser').DataTable({
         "ajax": "core/user/user_db.php?action=list",
 		dom: 'Bfrtip',
+		rowId: 'iduser',
         buttons: [
 			{
                 text: '<a class="btn btn-success" href="#" role="button">Novo</a>',
@@ -72,9 +73,9 @@
 	});
 	
 	$('#dbguser tbody').on('click', 'td', function () {
-		var col = $(this).parent().children().index($(this));
-		var row = $(this).parent().parent().children().index($(this).parent());
-		var iduser = table.row(table.row(row)).data().iduser;
+		var col = $(this).index();
+		var iduser = $(this).parent().attr('id');
+		
 		var urluser = '';
 		if (col == 0){
 			urluser = 'core/user/user_view.php?page=view&id='+iduser;
@@ -93,8 +94,66 @@
 	});	
 	
 	$("#myModal").on('hidden.bs.modal', function () {
-			table.ajax.reload();
+		table.ajax.reload();
     });
+	
+	$("#myModal").on('shown.bs.modal', function () {
+		var id = $("#iduser").val();
+		
+		$.getJSON('core/user/user_db.php?action=sel&id='+id, function(result){
+			$.each(result, function(i, field){				
+				$("#frmuser #"+i).val(field);
+			});
+		});	
+		
+		var tablep = $('#dbgperm').DataTable({
+			"ajax": "core/user/user_db.php?action=perm&id="+id,	
+			dom: 'Bfrtip',
+			buttons: [
+				{
+					text: '<a class="btn btn-primary" href="#" role="button" id="btnPerm">Salvar</a>',
+					titleAttr: 'Salvar'
+				}],		
+			"columns": [		
+				{ "data": "descricao" },
+				{ "data": "inserir" },
+				{ "data": "alterar" },
+				{ "data": "apagar" },
+				{ "data": "visualizar" }
+			],	
+			 "paging":   false,
+			 "ordering": false,
+			 "info":     false,
+			 //"retrieve": false,
+			// "scrollY": "200px",
+			 //"pageLength": 5,
+			 //  "lengthChange": true,
+				"language": {
+				"lengthMenu": "Mostrar _MENU_ registros por página",
+				"zeroRecords": "Zero registro encontrado",
+				"info": "Página _PAGE_ de _PAGES_",
+				"Previous": "Anterior",
+				"infoEmpty": "Nenhum Registro Encontrado",
+				"infoFiltered": "(Filtrados de _MAX_ registros)"}							
+		});
+		
+		$('#btnPerm').click( function() {
+			var dadosp = tablep.$('input').serialize();
+			//var id = 83;
+			//console.log(dados);
+			$.ajax({
+				type: 'POST',
+				dataType: 'json', 
+				async: false,
+				url: 'core/user/user_db.php?action=updperm&id='+id,
+				data: dadosp,
+				success: function (response) {
+					msg_sucess('Permissão Salva!');
+				}
+			});		
+			return false;
+		});				
+	});		
 });
 </script>
 
