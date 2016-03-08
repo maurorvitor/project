@@ -44,14 +44,26 @@
                 "className":      'btngrid',
                 "orderable":      false,
                 "data":           null,
-                "defaultContent": '<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>'
+                "defaultContent": '<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>'
             },
 			{
                 "className":      'btngrid',
                 "orderable":      false,
                 "data":           null,
-                "defaultContent": '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
-            },			
+                "defaultContent": '<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>'
+            },
+			{
+                "className":      'btngrid',
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": '<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>'
+            },	
+			{
+                "className":      'btngrid',
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": '<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>'
+            },				
             { "data": "nome" },
             { "data": "email" },
             { "data": "login" },
@@ -85,7 +97,10 @@
 		}else
 		if (col == 2){
 			urluser = 'core/user/user_view.php?page=del&id='+iduser;
-		}else{
+		}else
+		if (col == 3){
+			urluser = 'core/user/user_view.php?page=per&id='+iduser;
+		}else{		
 		  return;
 		} 
 
@@ -164,6 +179,8 @@
 		<thead>
 			<tr>
 			    <th></th>
+				<th></th>
+				<th></th>
 				<th></th>
 				<th></th>
 				<th>Nome</th>

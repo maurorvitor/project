@@ -3,6 +3,7 @@
 <link href="css/main.css" rel="stylesheet">
 <link href="https://cdn.datatables.net/1.10.10/css/dataTables.bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.datatables.net/buttons/1.1.0/css/buttons.bootstrap.min.css" rel="stylesheet">
+<link href="css/query-builder.default.min.css" rel="stylesheet">
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="bootstrap/js/bootstrap.min.js"></script>	
@@ -18,6 +19,7 @@
 <script src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.print.min.js"></script>
 <script src="core/data/jslib.js"></script>
 <script src="mask/jquery.mask.min.js"></script>
+<script src="js/query-builder.standalone.min.js"></script>             
 <?php
 	$page = '';
 	//echo md5('123456');
@@ -52,7 +54,7 @@
 			include 'naopermitido.php';
 		}
 	}	
-	//include 'core/user/user_perm.php';
+	//include 'testebld.php';
 // //code.jquery.com/jquery-1.11.3.min.js
 // https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js
 // https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js

@@ -66,8 +66,9 @@ $(document).ready(function(){
 	$del =  ($page == 'del' ? true : false);
 	$edt =  ($page == 'edt' ? true : false);
 	$sen =  ($page == 'sen' ? true : false);		
+	$per =  ($page == 'per' ? true : false);		
 	
-	if (($view or $del or $edt or $sen) == false) {
+	if (($view or $del or $edt or $sen or $per) == false) {
 		$view = true;
 	}
 	
@@ -77,20 +78,12 @@ $(document).ready(function(){
 ?>	
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h4><?php echo ($view ? 'Visualizar' : '').($del ? 'Apagar' : '').($edt ? 'Alterar' : '').($sen ? 'Alterar Senha' : '');?> Usuário</h4></div>
+	<div class="panel-heading"><h4><?php echo ($view ? 'Visualizar' : '').($del ? 'Apagar' : '').($edt ? 'Alterar' : '').($sen ? 'Alterar Senha' : '').($per ? 'Permissões' : '');?> Usuário</h4></div>-
 	<div class="panel-body">
 		
 		<?php echo (($view or $del) ? 
 		'<img src="'.$image.'" class="img-circle" id="imguser" alt="Usuário" width="64" height="64" >':''); ?> 
-		<?php echo (($edt) ?
-		'<ul class="nav nav-tabs">
-			<li class="active"><a data-toggle="tab" href="#usuario">Usuário</a></li>
-			<li><a data-toggle="tab" href="#permissao">Permissão</a></li>
-		</ul>
-		
-		<div class="tab-content">
-			<div id="usuario" class="tab-pane fade in active">
-				<p>	':''); ?>		
+	
 					
 					<form class="form-horizontal" role="form" id="frmuser" data-toggle="validator" method="post" enctype="multipart/form-data">
 						
@@ -107,7 +100,7 @@ $(document).ready(function(){
 							</div>' : '');
 						?>
 						
-						<?php echo ($sen ? '':'
+						<?php echo (($sen or $per) ? '':'
 							<div class="form-group">
 							<label class="control-label col-sm-2" for="nome">Nome</label>
 							<div class="col-xs-5">
@@ -155,12 +148,7 @@ $(document).ready(function(){
 						</div>
 						
 					</form>	
-				<?php echo (($edt) ? '	
-				</div>				
-				<div id="permissao" class="tab-pane fade">
-					<div class="panel panel-default">
-						<div class="panel-heading"><h4>Permissões do Usuário</h4></div>
-						<div class="panel-body">	
+				<?php echo (($per) ? '					
 						<table id="dbgperm" class="table" cellspacing="0" width="100%">
 							<thead>
 								<tr>
@@ -172,9 +160,6 @@ $(document).ready(function(){
 								</tr>
 							</thead>
 						</table>				
-						</div>
-					</div>					
-				</div>
 			</div>	':'');?>
 			
 		</div>

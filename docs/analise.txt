@@ -1,0 +1,11 @@
+Analise
+
+Log - Possibilitar a configuração das tabelas que geram log e o momento:
+
+Data
+Hora
+usuário
+Tabela
+Campo
+Valor Antigo
+Valor Novo

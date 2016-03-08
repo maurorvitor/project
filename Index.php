@@ -57,7 +57,7 @@
 			<li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Login<span class="caret"></span></a>
               <ul class="dropdown-menu">
-                 <?php echo ((logado()) ? '<li><a href="javascript:edtsenha('.iduser().');"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Alterar Senha </a></li>':'');?>
+                 <?php echo ((logado()) ? '<li><a href="javascript:edtsenha('.iduser().');"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span> Alterar Senha </a></li>':'');?>
                  <?php echo ((logado()) ? '<li><a href="index.php?page=out"><span class="glyphicon glyphicon-off" aria-hidden="true"></span> Sair </a></li>':'');?>
 				 <?php echo ((logado()) ? '':'<li><a href="index.php?page=login"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Entrar </a></li>');?>
               </ul>
