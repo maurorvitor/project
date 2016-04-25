@@ -2,6 +2,13 @@
 
 include 'conection.php';
 
+function processmsg($status, $msg){
+	$return = array(); 
+	$return['success'] = $status;	
+	$return['mensage'] = $msg;	
+	return $return;
+}
+
 function tem_permissao($table, $tipo, &$response = array(), $verifica){	
 	$permissao = true;
 	if ($verifica == true){

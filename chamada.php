@@ -37,6 +37,9 @@
 				case "uni":
 					include 'core/unidade/unidade_cad.php';
 					break;					
+				case "teste":
+					include 'core/pessoa/layout.php';
+					break;					
 			}	
 		}else{
 			switch ($page) {

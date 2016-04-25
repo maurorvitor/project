@@ -44,7 +44,7 @@
               <ul class="dropdown-menu">
                 <li><a href="index.php?page=userl">Usuários</a></li>
                 <li><a href="index.php?page=uni">Unidade</a></li>
-                <li><a href="#">Something else here</a></li>
+                <li><a href="index.php?page=teste">Teste</a></li>
                 <li role="separator" class="divider"></li>
                 <li class="dropdown-header">Nav header</li>
                 <li><a href="#">Separated link</a></li>

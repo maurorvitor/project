@@ -1,11 +1,63 @@
-Analise
-
 Log - Possibilitar a configuração das tabelas que geram log e o momento:
+Tabela de Log
 
-Data
-Hora
+DataHora
 usuário
 Tabela
+Maquina
 Campo
 Valor Antigo
 Valor Novo
+
+Tabela de configuração do Log
+Tabela
+Descrição
+Inserir
+Alterar
+Apagar
+
+A geração de Log vai ser em banco externo ao da aplicação, e parametrizado se vai gerar ou não e o servidor/porta, usuário, senha e nome da base.
+Deve ser inserido na tabela de configuração somente as tabelas que permitam ser configuradas para geração de Log, atualizada sempre que criar um nova tabela.
+O acesso a configuração do log vai estar no controle de acesso por usuário.
+Se gerar log deve existir um botão ou atalho em toda a tela do sistema para abrir a consulta, filtrando por usuário e data.
+- Implementação.
+Nas operações de inserir, alterar e apagar genéricas deve chamar uma função genérica que deve ser executada somente se
+a operação foi realizada com sucesso:
+verifique se esta parametrizado o log.
+se a base está acessivel.
+verificar se a tabela e operação gera log.
+inserir o log de todos os campos da tabela na operação.
+
+Permissão de Acesso
+
+Tabela de Permissão
+Tabela
+Descrição
+Usuário
+Acessar
+Inserir 
+Alterar 
+Apagar
+
+Ao inserir um novo usuário deve ser criadas as tabelas de permissão para todas as tabelas do sistema.
+
+
+
+Log de acesso por usuário
+
+DataHora Entrada
+Maquina
+Data Hora saida
+Salvar o log no login e logout do usuário
+
+Permitir personalização de criação de campos
+obrigatoriedade
+tipo(inteiro, texto, área, editor, monetário, data, hora, datahora, numérico)
+valor único
+ordem de exibição
+valor padrão
+faixa de valores
+Aba
+Visivel na pesquisa
+Visivel na grade
+
