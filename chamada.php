@@ -38,7 +38,7 @@
 					include 'core/unidade/unidade_cad.php';
 					break;					
 				case "teste":
-					include 'core/pessoa/layout.php';
+					include 'core/pessoa/consulta.php';
 					break;					
 			}	
 		}else{

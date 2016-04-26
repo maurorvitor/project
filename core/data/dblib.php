@@ -31,7 +31,7 @@ function tem_permissao($table, $tipo, &$response = array(), $verifica){
 		}
 		if ($permissao == false){
 			$response['success'] = false;
-			$response['mensage'] = 'Usuário sem premissão de realizar ação!-';		
+			$response['mensage'] = 'Usuário sem premissão de realizar ação!';		
 		}
 		return $permissao;
 	}else{
@@ -95,7 +95,7 @@ function table_insert($table, $fields, &$id = 0, &$response = array(), $verifica
 	}
 }
 
-function table_update($table, $fields, $pk, &$response = array()){
+function table_update($table, $fields, $pk, &$response = array(), $verifica_permissao = true){
 	$link = linkbase();
 	mysqli_set_charset($link, "utf8");
 	$keys = '';
@@ -114,19 +114,24 @@ function table_update($table, $fields, $pk, &$response = array()){
 			$keys = $keys." $key = '$value' ";
 		}	
 	}	
-	$sql = " update $table set $values where($keys) ";  
-	$flag = mysqli_query($link, $sql);    
-	if ($flag == true){
-		$response['success'] = true;	
-		$response['mensage'] = 'Registro Alterado com Sucesso!';
+	$sql = " update $table set $values where($keys) "; 
+	
+ 	if (tem_permissao($table, 'alterar', $response, $verifica_permissao) == true){
+		$flag = mysqli_query($link, $sql);
+		if ($flag == true){
+			$response['success'] = true;	
+			$response['mensage'] = 'Registro Alterado com Sucesso!';
+		}else{
+			$response['success'] = false;
+			$response['mensage'] = 'Erro ao Alterar registro!-'.mysqli_error($link);		
+		}
+		return $flag;
 	}else{
-		$response['success'] = false;
-		$response['mensage'] = 'Erro ao Alterar registro!-'.mysqli_error($link);		
-	}	
-	return  $flag;
+		return false;
+	}
 }
 
-function table_delete($table, $pk, &$response = array()){
+function table_delete($table, $pk, &$response = array(), $verifica_permissao = true){
 	$link = linkbase();
 	mysqli_set_charset($link, "utf8");
 	$keys = '';
@@ -138,15 +143,19 @@ function table_delete($table, $pk, &$response = array()){
 		}	
 	}	
 	$sql = " delete from $table where($keys) ";     
-	$flag = mysqli_query($link, $sql);    
-	if ($flag == true){
-		$response['success'] = true;	
-		$response['mensage'] = 'Registro Apagado com Sucesso!';
+	if (tem_permissao($table, 'apagar', $response, $verifica_permissao) == true){
+		$flag = mysqli_query($link, $sql);    
+		if ($flag == true){
+			$response['success'] = true;	
+			$response['mensage'] = 'Registro Apagado com Sucesso!';
+		}else{
+			$response['success'] = false;
+			$response['mensage'] = 'Erro ao Apagar registro!-'.mysqli_error($link);		
+		}	
+		return  $flag;
 	}else{
-		$response['success'] = false;
-		$response['mensage'] = 'Erro ao Apagar registro!-'.mysqli_error($link);		
-	}	
-	return  $flag;
+		return false;
+	}
 }
 
 function table_select($table, $fields = '*', $pk = array(), $order = ''){
