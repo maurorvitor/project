@@ -1,7 +1,7 @@
 <script type="text/javascript">
  $(document).ready(function(){
 	var table = $('#dbguser').DataTable({
-        "ajax": "core/pessoa/db.php?action=select&table=teste&id=0&key=0",
+        "ajax": "core/pessoa/db.php?action=list&table=teste",
 		dom: 'Bfrtip',
 		rowId: 'codigo',
         buttons: [
@@ -51,16 +51,28 @@
                 "orderable":      false,
                 "data":           null,
                 "defaultContent": '<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>'
-            },			
+            },
+			{
+                "className":      'btngrid',
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": '<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>'
+            },	
+			{
+                "className":      'btngrid',
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": '<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>'
+            },				
             { "data": "codigo" },
-            { "data": "descricao" }            
+            { "data": "descricao" }
         ],	
 		"paging":   true,
 		"ordering": true,
 		"info":     true,
 		"retrieve": true,
-		//"pageLength": 5,
-		//"lengthChange": false,
+		"pageLength": 5,
+		"lengthChange": false,
 			"language": {
 			"lengthMenu": "Mostrar _MENU_ registros por página",
 			"zeroRecords": "Zero registro encontrado",
@@ -70,44 +82,44 @@
 			"infoFiltered": "(Filtrados de _MAX_ registros)"}							
 	});
 	
-	// $('#dbguser tbody').on('click', 'td', function () {
-		// var col = $(this).index();
-		// var iduser = $(this).parent().attr('id');
+	$('#dbguser tbody').on('click', 'td', function () {
+		var col = $(this).index();
+		var iduser = $(this).parent().attr('id');
 		
-		// var urluser = '';
-		// if (col == 0){
-			// urluser = 'core/user/user_view.php?page=view&id='+iduser;
-		// }else
-		// if (col == 1){
-			// urluser = 'core/user/user_view.php?page=edt&id='+iduser;
-		// }else
-		// if (col == 2){
-			// urluser = 'core/user/user_view.php?page=del&id='+iduser;
-		// }else
-		// if (col == 3){
-			// urluser = 'core/user/user_view.php?page=per&id='+iduser;
-		// }else{		
-		  // return;
-		// } 
+		var urluser = '';
+		if (col == 0){
+			urluser = 'core/user/user_view.php?page=view&id='+iduser;
+		}else
+		if (col == 1){
+			urluser = 'core/user/user_view.php?page=edt&id='+iduser;
+		}else
+		if (col == 2){
+			urluser = 'core/user/user_view.php?page=del&id='+iduser;
+		}else
+		if (col == 3){
+			urluser = 'core/user/user_view.php?page=per&id='+iduser;
+		}else{		
+		  return;
+		} 
 
-		// $("#content-modal").load(urluser);
-		// $('#myModal').modal('show');			
-	// });	
+		$("#content-modal").load(urluser);
+		$('#myModal').modal('show');			
+	});	
 	
-	// $("#myModal").on('hidden.bs.modal', function () {
-		// table.ajax.reload();
-    // });
+	$("#myModal").on('hidden.bs.modal', function () {
+		table.ajax.reload();
+    });
 	
-	// $("#myModal").on('shown.bs.modal', function () {
-		// var id = $("#iduser").val();
+	$("#myModal").on('shown.bs.modal', function () {
+		var id = $("#iduser").val();
 		
-		// $.getJSON('core/user/user_db.php?action=sel&id='+id, function(result){
-			// $.each(result, function(i, field){				
-				// $("#frmuser #"+i).val(field);
-			// });
-		// });					
-	// });		
- });
+		$.getJSON('core/user/user_db.php?action=sel&id='+id, function(result){
+			$.each(result, function(i, field){				
+				$("#frmuser #"+i).val(field);
+			});
+		});					
+	});		
+});
 </script>
 
 <div class="panel panel-default">
@@ -116,7 +128,9 @@
 	<table id="dbguser" class="table table-hover table-striped table-bordered" cellspacing="0" width="100%">
 		<thead>
 			<tr>
-				<td></td>
+			    <th></th>
+				<th></th>
+				<th></th>
 				<th></th>
 				<th></th>
 				<th>Código</th>
@@ -127,19 +141,3 @@
 	</div>
 </div>
 
-<?php
-
-class Lista{
-	private $title = '';
-	private $content = '';
-	private $table = '';
-	private $key = '';
-	private $fields = array();
-	
-	function Lista($title, $table, $fields , $key){
-		$this->title = $title;
-		$this->table = $table;
-		$this->fields = $fields;
-	}
-
-?>

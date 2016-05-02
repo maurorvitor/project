@@ -79,7 +79,18 @@
 			if ($this->action == 'select'){			
 				$result = table_select($this->table,'*',array("$this->pkname"=>$this->pkvalue));
 				$this->result = mysqli_fetch_object($result);
-			}		
+			}
+			if ($this->action == 'list'){	
+				$result = table_select($this->table,'*');		
+				$linhas = array();
+				while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+					$linhas[] = $row;
+				}
+				$data = array();
+				$data['data'] = $linhas;				
+				$this->result = $data;
+			}			
+			
 			$this->json = json_encode($this->result);
 		}
 		private function decodevars($get, $post){

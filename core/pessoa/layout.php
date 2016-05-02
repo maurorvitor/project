@@ -162,6 +162,8 @@ class Form{
 	private $action = '';
 	private $table = '';
 	private $key = '';
+	private $type = '';
+	private $cod = 0;
 	private $baseurl = 'http://localhost/Portal/';
 	private $redirect = 'index.php';
 	private $fields = array();
@@ -171,63 +173,87 @@ class Form{
 	private $edit = false;
 	private $delete = false;
 	
-	public function showinsert($title, $table){
+	function Form($title, $table, $get){
+		$this->title = $title;
+		$this->table = $table;
+		
+		if (isset($get['cod'])){
+			$this->cod = $get['cod']; 
+		}	
+		if (isset($get['type'])){
+			$this->type = $get['type']; 
+		}	
+	}
+	public show(){
+		if($this->type == 'insert'){
+			$this->title = 'Inserir '.$this->title;
+			return showinsert();
+		}
+		if($this->type == 'edit'){
+			$this->title = 'Alterar '.$this->title;
+			return showedit($this->cod);
+		}
+		if($this->type == 'delete'){
+			$this->title = 'Apagar '.$this->title;
+			return showdelete($this->cod);
+		}
+		if($this->type == 'show'){
+			return showRecord($this->cod);
+		}	
+	}
+	
+	private function showinsert(){
 		$content = '';
 		$this->refresh();
 		$this->insert = true;
-		$this->action = "core/pessoa/db.php?action=insert&table=$table";
-		$this->table = $table;
-		$this->id = 'frmins'.$table;		
+		$this->action = "core/pessoa/db.php?action=insert&table=$this->table";
+		$this->id = 'frmins'.$this->table;		
 		$content .= getjscad($this->id, $this->action);
-		$content .= $this->create($title, $this->id); 
+		$content .= $this->create($this->id); 
 		$content .= getjsclose($this->baseurl.$this->redirect);			
 		return $content;
 	}
-	public function showedit($title, $table, $cod){
+	private function showedit($cod){
 		$content = '';
 		$this->refresh(); 
 		$this->edit = true;
-		$this->action = "core/pessoa/db.php?action=update&table=$table&id=$cod&key=$this->key";
-		$this->table = $table;
-		$this->id = 'frmedt'.$table;				
-		$content .= $this->create($title, $this->id); 	
-		$content .= getfields($this->id, "core/pessoa/db.php?action=select&table=$table&id=$cod&key=$this->key");
+		$this->action = "core/pessoa/db.php?action=update&table=$this->table&id=$cod&key=$this->key";
+		$this->id = 'frmedt'.$this->table;				
+		$content .= $this->create($this->id); 	
+		$content .= getfields($this->id, "core/pessoa/db.php?action=select&table=$this->table&id=$cod&key=$this->key");
 		$content .= getjsedt($this->id, $this->action);		
 		$content .= getjsclose($this->baseurl.$this->redirect);			
 		return $content;
 	}	
-	public function showdelete($title, $table, $cod){
+	private function showdelete($cod){
 		$content = '';
 		$this->refresh();
 		$this->delete = true;
 		$this->disabledall();
 		$this->clearall();
-		$this->action = "core/pessoa/db.php?action=delete&table=$table&id=$cod&key=$this->key";
-		$this->table = $table;
-		$this->id = 'frmedt'.$table;				
-		$content .= $this->create($title, $this->id); 	
-		$content .= getfields($this->id, "core/pessoa/db.php?action=select&table=$table&id=$cod&key=$this->key");
+		$this->action = "core/pessoa/db.php?action=delete&table=$this->table&id=$cod&key=$this->key";
+		$this->id = 'frmedt'.$this->table;				
+		$content .= $this->create($this->id); 	
+		$content .= getfields($this->id, "core/pessoa/db.php?action=select&table=$this->table&id=$cod&key=$this->key");
 		$content .= getjsdel($this->id, $this->action);			
 		$content .= getjsclose($this->baseurl.$this->redirect);			
 		return $content;
 	}	
 	
-	public function showRecord($title, $table, $cod){
+	private function showRecord($cod){
 		$content = '';
 		$this->refresh();
 		$this->disabledall();
 		$this->clearall();
 		$this->action = "";
-		$this->table = $table;
-		$this->id = 'frmsel'.$table;				
-		$content .= $this->create($title, $this->id); 	
-		$content .= getfields($this->id, "core/pessoa/db.php?action=select&table=$table&id=$cod&key=$this->key");
+		$this->id = 'frmsel'.$this->table;				
+		$content .= $this->create($this->id); 	
+		$content .= getfields($this->id, "core/pessoa/db.php?action=select&table=$this->table&id=$cod&key=$this->key");
 		$content .= getjsclose($this->baseurl.$this->redirect);			
 		return $content;
 	}		
 	
-	private function create($title, $id){
-		$this->title = $title;
+	private function create($id){
 		$this->id = $id;
 		$this->content .= $this->firstfields;
 		$this->content .= $this->createfields();
@@ -329,14 +355,9 @@ class Field{
 }	
 
 
-$form = new Form;	
+$form = new Form('Teste','teste',$_GET);	
 $form->newKey(1, 'codigo', 'Código');
 $form->newText(2, 'descricao', 'Descrição', true, false, 'Digite a descrição');
-
-echo $form->showinsert('Cadastro Teste','teste');
-//echo $form->showedit('Alterar Teste','teste', 1);
-//echo $form->showRecord('visualizar Teste','teste', 4);
-
-//	echo $form->showdelete('Apagar Teste','teste',1);
+echo $form->show();
 
 ?>
