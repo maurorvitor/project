@@ -42,14 +42,14 @@ function createinputemail($id, $name, $required = false,  $autofocus = false, $d
 	"<input type='email' class='form-control' id='$id' name='$name' placeholder='$placeholder' ".($required ? "required":"")." ".($autofocus ? "autofocus":" ")." ".($disabled ? "disabled":" ").">";
 }
 
-function createbuttons($insert = false, $edit = false, $delete = false){
+function createbuttons($insert = false, $edit = false, $delete = false, $modal = false){
 	return 
 	"<div class='form-group'> 
 		<div class='col-sm-offset-2 col-sm-10'>
 		    ".($insert ? "<button type='submit' class='btn btn-primary'>Salvar</button>":"")."			
 			".($edit ? "<button id='btnEdit' type='button' class='btn btn-primary'>Salvar</button>":"")."
 			".($delete ? "<button id='btnDelete' type='button' class='btn btn-danger'>Confirmar</button>":"")."
-			<button id='btnfechar' type='button' class='btn btn-default' >Fechar</button>
+			".($modal ? "<button id='btnfechar' type='button' class='btn btn-default' >Fechar</button>":"")."
 		</div>
 	</div>";
 }	
@@ -163,6 +163,7 @@ class Form{
 	private $table = '';
 	private $key = '';
 	private $type = '';
+	private $modal = true;
 	private $cod = 0;
 	private $baseurl = 'http://localhost/Portal/';
 	private $redirect = 'index.php';
@@ -183,22 +184,28 @@ class Form{
 		if (isset($get['type'])){
 			$this->type = $get['type']; 
 		}	
+		if (isset($get['modal'])){
+			$this->modal = ($get['modal'] === 'true')? true: false; 
+		}			
+		if (isset($get['redirect'])){
+			$this->redirect = $get['redirect']; 
+		}			
 	}
-	public show(){
+	public function show(){
 		if($this->type == 'insert'){
 			$this->title = 'Inserir '.$this->title;
-			return showinsert();
+			return $this->showinsert();
 		}
 		if($this->type == 'edit'){
 			$this->title = 'Alterar '.$this->title;
-			return showedit($this->cod);
+			return $this->showedit($this->cod);
 		}
 		if($this->type == 'delete'){
 			$this->title = 'Apagar '.$this->title;
-			return showdelete($this->cod);
+			return $this->showdelete($this->cod);
 		}
 		if($this->type == 'show'){
-			return showRecord($this->cod);
+			return $this->showRecord($this->cod);
 		}	
 	}
 	
@@ -315,7 +322,7 @@ class Form{
 		return $fields;
 	}
 	private function createbuttons(){
-		return createbuttons($this->insert, $this->edit, $this->delete);
+		return createbuttons($this->insert, $this->edit, $this->delete, $this->modal);
 	}
 	public function newText($ord, $name, $label, $required = false, $autofocus = false, $placeholder = '', $disabled = false){
 		$field = new Field;		

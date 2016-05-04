@@ -4,8 +4,11 @@
         "ajax": "core/pessoa/db.php?action=list&table=teste",
 		dom: 'Bfrtip',
 		rowId: 'codigo',
-		//stateSave: true,
-		
+		stateSave: true,
+		fixedColumns: {
+			leftColumns: 1,
+			rightColumns: 5
+		},
         select: {
             style:    'os,multi',
             selector: 'td:first-child'
@@ -25,8 +28,7 @@
                 text: '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>',
 				titleAttr: 'Novo',
                 action: function ( e, dt, node, config ) {
-                    window.location.replace("index.php?page=userc");
-					//console.log(table.rows({ selected: true }).ids());
+                    window.location.replace("core/pessoa/layout.php?type=insert");
                 }
             },		
 			{
@@ -61,7 +63,7 @@
                 text:      '<span class="glyphicon glyphicon-file" aria-hidden="true"></span>',
                 titleAttr: 'PDF',
 				exportOptions: {
-                    columns: '0,1'
+                    columns: '1,2'
                 }
             },
             {
@@ -122,7 +124,6 @@
 		"scrollY": "200px",
 		"scrollCollapse": true,
 		"paging": false,
-		//"paging":   true,
 		"ordering": true,
 		"info":     true,
 		"retrieve": true,
@@ -155,48 +156,31 @@
 		}
 	});
 	
-	// $('#dbguser tbody').on('click', 'td', function () {
-		// var col = $(this).index();
-		// var iduser = $(this).parent().attr('id');
-		
-		// var urluser = '';
-		// if (col == 0){
-			// urluser = 'core/user/user_view.php?page=view&id='+iduser;
-		// }else
-		// if (col == 1){
-			// urluser = 'core/user/user_view.php?page=edt&id='+iduser;
-		// }else
-		// if (col == 2){
-			// urluser = 'core/user/user_view.php?page=del&id='+iduser;
-		// }else
-		// if (col == 3){
-			// urluser = 'core/user/user_view.php?page=per&id='+iduser;
-		// }else{		
-		  // return;
-		// } 
-
-		// $("#content-modal").load(urluser);
-		// $('#myModal').modal('show');			
-	// });	
+	$('#dbguser tbody').on('click', 'td', function () {
+		var col = $(this).index();
+		var iduser = table.row($(this).parent()).id();
+		var urluser = '';
+		if (col == 3){
+			urluser = 'core/pessoa/layout.php?type=show&modal=false&cod='+iduser;
+		}else
+		if (col == 4){
+			urluser = 'core/pessoa/layout.php?type=edit&modal=false&cod='+iduser;
+		}else
+		if (col == 5){
+			urluser = 'core/pessoa/layout.php?type=delete&modal=false&cod='+iduser;
+		}else{		
+		  return;
+		} 
+		$("#content-modal").load(urluser);
+		$('#myModal').modal('show');			
+	 });	
 	
 	$("#myModal").on('hidden.bs.modal', function () {
 		table.ajax.reload();
     });
 	
-	$("#myModal").on('shown.bs.modal', function () {
-		var id = $("#iduser").val();
-		
-		$.getJSON('core/user/user_db.php?action=sel&id='+id, function(result){
-			$.each(result, function(i, field){				
-				$("#frmuser #"+i).val(field);
-			});
-		});					
-	});	
-	
- $("#demo_rules1").jui_filter_rules({
- 
-        bootstrap_version: "3",
- 
+	$("#demo_rules1").jui_filter_rules({ 
+        bootstrap_version: "3", 
         filters: [
             {
                 filterName: "codigo", "filterType": "number", "numberType": "integer", field: "codigo", filterLabel: "Código",
@@ -212,24 +196,12 @@
                     }
                 ]
             }
-        ], 
-        onValidationError: function(event, data) {
-            alert(data["err_description"] + ' (' + data["err_code"] + ')');
-            if(data.hasOwnProperty("elem_filter")) {
-                data.elem_filter.focus();
-            }
-        }, 
-        onSetRules: function() {
-            //show_modal($("#modal_dialog"), $("#modal_dialog_content"), "New rules have been applied.");
-            return false;
-        }
+        ]
     });
 	
 	$('#btnconfirm').on('click', function () {		
-		var a_rules = false, use_prepared_statements, pst_placeholder;
-		
-		a_rules = $("#demo_rules1").jui_filter_rules("getRules", 0, []);
-		
+		var a_rules = false, use_prepared_statements, pst_placeholder;		
+		a_rules = $("#demo_rules1").jui_filter_rules("getRules", 0, []);		
 		if(!a_rules) {
 			alert("Erro no filtro...");
 			return false;
@@ -237,27 +209,24 @@
 		if(a_rules.length == 0) {
 			alert("Filtro não definido...");
 			return false;
-		}else{
-		
-		
-		$.ajax({
-			type: 'POST',
-			url: "filter/ajax_create_sql.dist.php",
-			data: {
-				a_rules: a_rules,
-				use_ps: use_prepared_statements,
-				pst_placeholder: pst_placeholder
-			},
-			dataType: "JSON",
-			success: function(data) {
-				if(data.hasOwnProperty("error")) {
-					alert(data["error"]);
-				}else{
-					table.ajax.url('core/pessoa/db.php?action=list&table=teste&where='+data["sql"]).load();
+		}else{		
+			$.ajax({
+				type: 'POST',
+				url: "filter/ajax_create_sql.dist.php",
+				data: {
+					a_rules: a_rules,
+					use_ps: use_prepared_statements,
+					pst_placeholder: pst_placeholder
+				},
+				dataType: "JSON",
+				success: function(data) {
+					if(data.hasOwnProperty("error")) {
+						alert(data["error"]);
+					}else{
+						table.ajax.url('core/pessoa/db.php?action=list&table=teste&where='+data["sql"]).load();
+					}
 				}
-			}
-		});			
-			
+			});				
 		}
 	});	
 });
@@ -265,14 +234,15 @@
 <div id="filtromodal" class="modal fade" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog">
 	<div class="modal-content">			
-	  <div class="modal-header"> Filtrar
+	  <div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal">&times;</button>						
+		<h4> Filtrar </h4>
 	  </div>	  
-	  <div class="modal-body" id="content-modal">	
+	  <div class="modal-body" id="filtro-content">	
 	  <div id="demo_rules1"></div>
 	  </div>	  
 	  <div class="modal-footer">
-	    <button type="button" class="btn btn-success" data-dismiss="modal" id="btnconfirm">Aplicar</button>
+	    <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnconfirm">Aplicar</button>
 		<button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
 	  </div>			  
 	</div>
