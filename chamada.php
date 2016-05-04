@@ -1,25 +1,36 @@
 <meta charset="utf-8">  <!--remover-->
 <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <link href="css/main.css" rel="stylesheet">
-<link href="https://cdn.datatables.net/1.10.10/css/dataTables.bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.datatables.net/buttons/1.1.0/css/buttons.bootstrap.min.css" rel="stylesheet">
+
+<link href="datatables/dataTables.bootstrap.min.css" rel="stylesheet">
+<link href="datatables/buttons.bootstrap.min.css" rel="stylesheet">
+<link href="datatables/select.bootstrap.min.css" rel="stylesheet">
 <link href="css/query-builder.default.min.css" rel="stylesheet">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 <script src="bootstrap/js/bootstrap.min.js"></script>	
 <script src="bootstrap/js/validator.js"></script>	
+
 <script src="datatables/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.1.0/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.bootstrap.min.js"></script>
+<script src="datatables/buttons.colVis.min.js"></script>
+<script src="datatables/dataTables.bootstrap.min.js"></script>
+<script src="datatables/dataTables.buttons.min.js"></script>
+<script src="datatables/buttons.bootstrap.min.js"></script>
+<script src="datatables/dataTables.select.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
 <script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
 <script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
-<script src="js/buttons.html5.min.js"></script>             
+<script src="datatables/buttons.html5.min.js"></script>             
 <script src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.print.min.js"></script>
+
 <script src="core/data/jslib.js"></script>
 <script src="mask/jquery.mask.min.js"></script>
-<script src="js/query-builder.standalone.min.js"></script>             
+
+<link href="filter/jquery.jui_filter_rules.bs.min.css" rel="stylesheet">
+<script src="filter/jquery.jui_filter_rules.min.js"></script>             
+<script src="filter/en.min.js"></script>             
+<script src="filter/moment.min.js"></script>             
+
 <?php
 	$page = '';
 	//echo md5('123456');
@@ -69,7 +80,8 @@
   <div class="modal-dialog">
 	<!-- Modal content-->
 	<div class="modal-content">			
-	  <div class="modal-header">
+	  <div class="modal-header"> 
+	
 		<button type="button" class="close" data-dismiss="modal">&times;</button>						
 	  </div>
 	  

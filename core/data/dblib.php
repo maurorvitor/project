@@ -158,7 +158,7 @@ function table_delete($table, $pk, &$response = array(), $verifica_permissao = t
 	}
 }
 
-function table_select($table, $fields = '*', $pk = array(), $order = ''){
+function table_select($table, $fields = '*', $pk = array(), $where = '', $order = ''){
 	$link = linkbase();
 	mysqli_set_charset($link, "utf8");
 	$keys = '';
@@ -175,7 +175,7 @@ function table_select($table, $fields = '*', $pk = array(), $order = ''){
 	if($order != ''){
 		$order = " order by $order";
 	}	
-	$sql = " select $fields from $table $keys $order";     
+	$sql = " select $fields from $table $keys $where $order";     
 	return  mysqli_query($link, $sql);    
 }
 

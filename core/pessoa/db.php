@@ -6,6 +6,7 @@
 		private $pkname = '';
 		private $pkvalue = '';  
 		public $table = '';				
+		public $where = '';				
 		public $values = array();
 		public $result = array();
 		public $success = false;
@@ -81,7 +82,7 @@
 				$this->result = mysqli_fetch_object($result);
 			}
 			if ($this->action == 'list'){	
-				$result = table_select($this->table,'*');		
+				$result = table_select($this->table,'*', array(), $this->where);		
 				$linhas = array();
 				while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 					$linhas[] = $row;
@@ -99,6 +100,9 @@
 			}	
 			if (isset($get['action'])){
 				$this->action = $get['action']; 
+			}
+			if (isset($get['where'])){
+				$this->where = $get['where']; 
 			}
 			if (isset($get['key'])){
 				$this->pkname = $get['key']; 
