@@ -10,6 +10,11 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 <script src="bootstrap/js/bootstrap.min.js"></script>	
 <script src="bootstrap/js/validator.js"></script>	
+<script src="bootstrap/js/collapse.js"></script>	
+<script src="bootstrap/js/transition.js"></script>	
+<script src="filter/moment.min.js"></script>             
+<script src="filter/pt-br.js"></script>             
+<script src="filter/bootstrap-datetimepicker.min.js"></script>   
 
 <script src="datatables/jquery.dataTables.min.js"></script>
 <script src="datatables/buttons.colVis.min.js"></script>
@@ -27,10 +32,10 @@
 <script src="mask/jquery.mask.min.js"></script>
 
 <link href="filter/jquery.jui_filter_rules.bs.min.css" rel="stylesheet">
+<link href="filter/bootstrap-datetimepicker.min.css" rel="stylesheet">
 <script src="filter/jquery.jui_filter_rules.min.js"></script>             
-<script src="filter/en.min.js"></script>             
-<script src="filter/moment.min.js"></script>             
-
+<script src="filter/en.min.js"></script>                       
+<div id="main">
 <?php
 	$page = '';
 	//echo md5('123456');
@@ -75,7 +80,7 @@
 
   //<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js" charset="utf-8"></script>	
 ?>
-
+</div>
 <div id="myModal" class="modal fade" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog">
 	<!-- Modal content-->

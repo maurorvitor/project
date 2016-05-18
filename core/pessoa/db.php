@@ -20,6 +20,8 @@
 		public $afterupdate = '';
 		public $beforedelete = '';
 		public $afterdelete = '';
+		public $onlist = '';
+		public $linhas = array();
 		
 		function Dataquery($get, $post){  
 			$this->decodevars($get, $post);	
@@ -83,12 +85,15 @@
 			}
 			if ($this->action == 'list'){	
 				$result = table_select($this->table,'*', array(), $this->where);		
-				$linhas = array();
+				
 				while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
-					$linhas[] = $row;
+					$this->linhas[] = $row;
+				}				
+				if (is_callable($this->onlist)){
+					call_user_func($this->onlist);
 				}
 				$data = array();
-				$data['data'] = $linhas;				
+				$data['data'] = $this->linhas;				
 				$this->result = $data;
 			}			
 			
@@ -116,14 +121,29 @@
 				}
 			}  
 		}
+		public function formatvalue($field, $map){
+			foreach($this->linhas as $rec => $row){			
+				foreach($row as $key => $value){
+					if($key == $field){
+						$this->linhas[$rec][$key] = $map[$value];
+					}					
+				}					
+			}	
+		}
 	}
 
 	$qryTeste = new Dataquery($_GET, $_POST);		
 	//closure
-	$qryTeste->beforeinsert = function(){
+	//$qryTeste->beforeinsert = function(){
+		//global $qryTeste; 
+		//$qryTeste->values['descricao'] = 'viu so';
+		//return processmsg(true, 'Não inseriu');
+	//};	
+	$qryTeste->onlist = function(){
 		global $qryTeste; 
-		$qryTeste->values['descricao'] = 'viu so';
-		return processmsg(true, 'Não inseriu');
+		$qryTeste->formatvalue('sexo', array(''=>'','M'=>'Masculino','F'=>'Feminino'));
+		$qryTeste->formatvalue('estado', array(''=>'','S'=>'Solteiro','C'=>'Casado','V'=>'Viúvo'));
+		$qryTeste->formatvalue('concorda', array(''=>'','1'=>'Sim','2'=>'Não'));
 	};	
 	$qryTeste->execute();	
 	echo $qryTeste->json;

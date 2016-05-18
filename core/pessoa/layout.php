@@ -41,7 +41,67 @@ function createinputemail($id, $name, $required = false,  $autofocus = false, $d
 	return 
 	"<input type='email' class='form-control' id='$id' name='$name' placeholder='$placeholder' ".($required ? "required":"")." ".($autofocus ? "autofocus":" ")." ".($disabled ? "disabled":" ").">";
 }
+function createtextarea($id, $name, $required = false,  $autofocus = false, $disabled = false, $placeholder = ''){
+	return 
+	"<textarea class='form-control' id='$id' rows='5' name='$name' placeholder='$placeholder' ".($required ? "required":"")." ".($autofocus ? "autofocus":" ")." ".($disabled ? "disabled":" ")."></textarea>";
+}
+function createradiobox($id, $name, $values, $required = false,  $disabled = false){
+	$data = '';
+	foreach($values as $key => $value){
+		$data .= "<label class='radio-inline'><input type='radio' value='$key' id='$id' name='$name'  ".($required ? "required":"")."  ".($disabled ? "disabled":" ").">$value</label>";
+	}
+	return $data;
+}
+function createcheckbox($id, $name, $value, $required = false,  $disabled = false){
+	return 
+	"<input type='checkbox' value='$value' id='$id' name='$name'  ".($required ? "required":"")."  ".($disabled ? "disabled":" ").">";
+}
 
+function createdate($id, $name, $required = false,  $disabled = false, $current = false, $hour = false){
+	return 
+	"<div class='input-group date' id='".$id."_div'>
+		<input type='text' class='form-control' id='$id' name='$name' ".($required ? "required":"")."  ".($disabled ? "disabled":" ")." />
+		<span class='input-group-addon'>
+			<span class='glyphicon glyphicon-calendar'></span>
+		</span>
+	</div>
+	<script type='text/javascript'>
+            $(function () {
+                $('#".$id."_div').datetimepicker({
+					locale: 'pt-br'
+					".($hour ? ",format: 'DD/MM/YYYY HH:mm:ss'":",format: 'DD/MM/YYYY'")."
+					".($current ? ",defaultDate: new Date()":"")."
+				});
+            });
+    </script>";
+}
+
+function createhour($id, $name, $required = false,  $disabled = false, $current = false){
+	return 
+	"<div class='input-group date' id='".$id."_div'>
+		<input type='text' class='form-control' id='$id' name='$name' ".($required ? "required":"")."  ".($disabled ? "disabled":" ")." />
+		<span class='input-group-addon'>
+			<span class='glyphicon glyphicon-time'></span>
+		</span>
+	</div>
+	<script type='text/javascript'>
+            $(function () {
+                $('#".$id."_div').datetimepicker({
+					locale: 'pt-br',
+					format: 'HH:mm:ss'
+					".($current ? ",defaultDate: new Date()":"")."
+				});
+            });
+    </script>";
+}
+function createselect($id, $name, $values, $required,  $disabled, $placeholder){
+	$data = "<select class='form-control' id='$id' name='$name' placeholder='$placeholder' ".($required ? "required":"")."  ".($disabled ? "disabled":" ").">";
+	foreach($values as $key => $value){
+		$data .= "<option value='$key'>$value</option>";
+	}
+	$data .= "</select>";
+	return $data;	
+}
 function createbuttons($insert = false, $edit = false, $delete = false, $modal = false){
 	return 
 	"<div class='form-group'> 
@@ -135,7 +195,7 @@ function getjsclose($url){
 	"<script type='text/javascript'>
 		$(document).ready(function(){			
 			$('#btnfechar').on('click', function () {	
-				window.location.href = '$url';
+				$('#main').load('$url');
 			});	
 		});	
 	</script> ";	
@@ -174,7 +234,7 @@ class Form{
 	private $edit = false;
 	private $delete = false;
 	
-	function Form($title, $table, $get){
+	function Form($title, $table, $get, $redirect = ''){
 		$this->title = $title;
 		$this->table = $table;
 		
@@ -185,11 +245,9 @@ class Form{
 			$this->type = $get['type']; 
 		}	
 		if (isset($get['modal'])){
-			$this->modal = ($get['modal'] === 'true')? true: false; 
+			$this->modal = (($get['modal'] == 'true')? true: false); 
 		}			
-		if (isset($get['redirect'])){
-			$this->redirect = $get['redirect']; 
-		}			
+		$this->redirect = $redirect; 
 	}
 	public function show(){
 		if($this->type == 'insert'){
@@ -306,12 +364,29 @@ class Form{
 			break; 
 			case 'email':
 				return createinputemail($field->id, $field->name, $field->required,  $field->autofocus, $field->disabled, $field->placeholder);
+			break;
+			case 'textarea'	:
+				return createtextarea($field->id, $field->name, $field->required,  $field->autofocus, $field->disabled, $field->placeholder);
+			break; 
+			case 'checkbox'	:
+				return  createcheckbox($field->id, $field->name, $field->value, $field->required,  $field->disabled);
+			break; 
+			case 'radiobox'	:
+				return  createradiobox($field->id, $field->name, $field->values, $field->required,  $field->disabled);
+			break; 	
+			case 'select'	:
+				return  createselect($field->id, $field->name, $field->values, $field->required,  $field->disabled, $field->placeholder);
+			break; 	
+			case 'date'	:
+				return  createdate($field->id, $field->name, $field->required,  $field->disabled, $field->current, $field->hour);
+			break; 				
+			case 'hour'	:
+				return  createhour($field->id, $field->name, $field->required,  $field->disabled, $field->current);
 			break; 			
 		}		
 	}	
 	private function createfields(){		
 		$fields = '';
-		ksort($this->fields);
 		foreach($this->fields as $key => $value){
 			if (!(($this->insert == true)&&($value->key == true))){
 				$input = '';
@@ -324,7 +399,7 @@ class Form{
 	private function createbuttons(){
 		return createbuttons($this->insert, $this->edit, $this->delete, $this->modal);
 	}
-	public function newText($ord, $name, $label, $required = false, $autofocus = false, $placeholder = '', $disabled = false){
+	public function newText($name, $label, $required = false, $autofocus = false, $placeholder = '', $disabled = false){
 		$field = new Field;		
 		$field->tipo = 'text';
 		$field->id = $name;
@@ -334,9 +409,85 @@ class Form{
 		$field->autofocus = $autofocus;
 		$field->placeholder = $placeholder;
 		$field->disabled = $disabled;
-		$this->fields[$ord] = $field;
+		array_push($this->fields, $field);
 	}
-	public function newKey($ord, $name, $label){
+	public function newTextArea($name, $label, $required = false, $autofocus = false, $placeholder = '', $disabled = false){
+		$field = new Field;		
+		$field->tipo = 'textarea';
+		$field->id = $name;
+		$field->name = $name;
+		$field->label = $label;
+		$field->required = $required; 
+		$field->autofocus = $autofocus;
+		$field->placeholder = $placeholder;
+		$field->disabled = $disabled;
+		array_push($this->fields, $field);
+	}	
+	public function newCheckbox($name, $label, $value, $required = false, $disabled = false){
+		$field = new Field;		
+		$field->tipo = 'checkbox';
+		$field->id = $name;
+		$field->name = $name;
+		$field->label = $label;
+		$field->required = $required; 
+		$field->autofocus = false;
+		$field->placeholder = '';
+		$field->disabled = $disabled;
+		$field->value = $value;
+		array_push($this->fields, $field);
+	}
+	public function newRadiobox($name, $label, $values, $required = false, $disabled = false){
+		$field = new Field;		
+		$field->tipo = 'radiobox';
+		$field->id = $name;
+		$field->name = $name;
+		$field->label = $label;
+		$field->required = $required; 
+		$field->autofocus = false;
+		$field->placeholder = '';
+		$field->disabled = $disabled;
+		$field->values = $values;
+		array_push($this->fields, $field);
+	}	
+	public function newSelect($name, $label, $values, $required = false, $disabled = false, $placeholder = ''){
+		$field = new Field;		
+		$field->tipo = 'select';
+		$field->id = $name;
+		$field->name = $name;
+		$field->label = $label;
+		$field->required = $required; 
+		$field->autofocus = false;
+		$field->placeholder = $placeholder;
+		$field->disabled = $disabled;
+		$field->values = $values;
+		array_push($this->fields, $field);
+	}	
+	public function newDate($name, $label, $required = false, $disabled = false, $current = false, $hour = false){
+		$field = new Field;		
+		$field->tipo = 'date';
+		$field->id = $name;
+		$field->name = $name;
+		$field->label = $label;
+		$field->required = $required; 
+		$field->autofocus = false;
+		$field->disabled = $disabled;
+		$field->current = $current;
+		$field->hour = $hour;		
+		array_push($this->fields, $field);
+	}	
+	public function newHour($name, $label, $required = false, $disabled = false, $current = false){
+		$field = new Field;		
+		$field->tipo = 'hour';
+		$field->id = $name;
+		$field->name = $name;
+		$field->label = $label;
+		$field->required = $required; 
+		$field->autofocus = false;
+		$field->disabled = $disabled;
+		$field->current = $current;	
+		array_push($this->fields, $field);
+	}	
+	public function newKey($name, $label){
 		$field = new Field;		
 		$field->tipo = 'text';
 		$field->id = $name;
@@ -345,7 +496,7 @@ class Form{
 		$field->key = true;
 		$field->label = $label;	
 		$field->disabled = true;
-		$this->fields[$ord] = $field;
+		array_push($this->fields, $field);
 	}	
 }	
 
@@ -359,12 +510,22 @@ class Field{
 	public $autofocus = false;
 	public $placeholder = '';	
 	public $disabled = false;
+	public $value = null;
+	public $values = array();
+	public $current = false;
+	public $hour = false;
 }	
 
 
 $form = new Form('Teste','teste',$_GET);	
-$form->newKey(1, 'codigo', 'Código');
-$form->newText(2, 'descricao', 'Descrição', true, false, 'Digite a descrição');
+$form->newKey('codigo', 'Código');
+$form->newText('descricao', 'Descrição', true, false, 'Digite a descrição');
+$form->newTextArea('observacao', 'Observacao');
+$form->newCheckbox('concorda', 'Concorda', '1');
+$form->newRadiobox('sexo', 'Sexo', array('M'=>'Masculino','F'=>'Feminino'));
+$form->newSelect('estado', 'Estado Civil', array(''=>'','S'=>'Solteiro','C'=>'Casado','V'=>'Viúvo'), true, false, 'Digite aqui');
+$form->newDate('data', 'Data', false, true, true, true);
+$form->newHour('hora', 'Hora', false, true, true);
 echo $form->show();
 
 ?>
