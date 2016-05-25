@@ -27,7 +27,6 @@
 <script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
 <script src="datatables/buttons.html5.min.js"></script>             
 <script src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.print.min.js"></script>
-
 <script src="core/data/jslib.js"></script>
 <script src="mask/jquery.mask.min.js"></script>
 
@@ -35,6 +34,13 @@
 <link href="filter/bootstrap-datetimepicker.min.css" rel="stylesheet">
 <script src="filter/jquery.jui_filter_rules.min.js"></script>             
 <script src="filter/en.min.js"></script>                       
+
+<link href="select/bootstrap-select.min.css" rel="stylesheet">
+<script src="select/bootstrap-select.min.js"></script>  
+<script src="select/defaults-pt_BR.js"></script>  
+<script src="editor/bootstrap-wysiwyg.js"></script>  
+<script src="editor/jquery.hotkeys.js"></script>  
+
 <div id="main">
 <?php
 	$page = '';

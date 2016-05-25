@@ -73,15 +73,15 @@
 	<div class="panel-heading"><h4>Unidade</h4></div>
 	<div class="panel-body">
 		<img src="<?php echo $image?>" class="img-circle" id="imguni" alt="Imagem" width="64" height="64" >
-		
+		<img src="<?php echo $image?>" alt="imagem" class="img-thumbnail" width="96" height="96">
 		<form class="form-horizontal" role="form" id="frmunidade" data-toggle="validator" method="post" enctype="multipart/form-data">
 			
 			
 			<div class="form-group">							
-				<label class="control-label col-sm-2" for="image"></label>
+				<label class="control-label col-sm-2" for="image">Imagem</label>
 				<div class="col-xs-5">					
 					<span class="btn btn-primary btn-file">
-						Imagem 	<input type="file" name="image" >					
+						Imagem 	<input type="file" id="image" name="image" accept=".gif,.jpg,.png" >					
 					</span>				
 				</div> 				
 			</div>

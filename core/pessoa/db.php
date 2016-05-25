@@ -13,7 +13,7 @@
 		public $log = false;
 		public $json = null;
 		public $id = 0;
-		public $cancelupdates = true;
+		public $cancelupdates = false;
 		public $beforeinsert = '';
 		public $afterinsert = '';
 		public $beforeupdate = '';
@@ -23,8 +23,8 @@
 		public $onlist = '';
 		public $linhas = array();
 		
-		function Dataquery($get, $post){  
-			$this->decodevars($get, $post);	
+		function Dataquery($get, $post, $files){  
+			$this->decodevars($get, $post, $files);	
 		}
 		
 		public function execute(){
@@ -99,7 +99,7 @@
 			
 			$this->json = json_encode($this->result);
 		}
-		private function decodevars($get, $post){
+		private function decodevars($get, $post, $files){
 			if (isset($get['table'])){
 				$this->table = $get['table']; 
 			}	
@@ -119,7 +119,15 @@
 				if(strpos($key,'ign_')===false){
 					$this->values[$key] = $value;
 				}
-			}  
+			} 
+			foreach ($files as $key => $value) {
+				$image = null;
+				if(strpos($key,'ign_')===false){
+					if ($files[$key]['size'] > 0) {
+						$this->values[$key] = addslashes(file_get_contents($files[$key]['tmp_name'])); 						
+					}				
+				}
+			}			
 		}
 		public function formatvalue($field, $map){
 			foreach($this->linhas as $rec => $row){			
@@ -130,20 +138,31 @@
 				}					
 			}	
 		}
+		public function formatdate($field){
+			foreach($this->values as $key => $value){			
+				if($key == $field){
+					$this->values[$key] = date("Y-m-d H:i:s", strtotime(str_replace('/', '-', $this->values[$key])));
+				}													
+			}	
+		}		
 	}
 
-	$qryTeste = new Dataquery($_GET, $_POST);		
+	$qryTeste = new Dataquery($_GET, $_POST, $_FILES);		
 	//closure
-	//$qryTeste->beforeinsert = function(){
-		//global $qryTeste; 
-		//$qryTeste->values['descricao'] = 'viu so';
-		//return processmsg(true, 'Não inseriu');
-	//};	
+	$qryTeste->beforeinsert = function(){
+		global $qryTeste; 
+		$qryTeste->formatdate('data');
+		//$qryTeste->values['data'] = date("Y-m-d H:i:s", strtotime(str_replace('/', '-', $qryTeste->values['data'])));
+		//$date =  new DateTime(str_replace('/', '-',$qryTeste->values['data']));
+		//$qryTeste->values['data'] = $date->date_timestamp_get();
+		//print_r($qryTeste->values);
+		//return processmsg(true, 'Registro inserido com sucesso!');
+	};	
 	$qryTeste->onlist = function(){
 		global $qryTeste; 
 		$qryTeste->formatvalue('sexo', array(''=>'','M'=>'Masculino','F'=>'Feminino'));
 		$qryTeste->formatvalue('estado', array(''=>'','S'=>'Solteiro','C'=>'Casado','V'=>'Viúvo'));
-		$qryTeste->formatvalue('concorda', array(''=>'','1'=>'Sim','2'=>'Não'));
+		$qryTeste->formatvalue('concorda', array(''=>'','1'=>'Sim','0'=>'Não'));
 	};	
 	$qryTeste->execute();	
 	echo $qryTeste->json;

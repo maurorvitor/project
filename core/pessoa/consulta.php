@@ -194,7 +194,7 @@ class Grid{
 	private $data = array();
 	private $filters = array();
 	private $searching = false;
-	private $openmodal = false;
+	private $close = false;
 	private $idmodal = '';
 	private $titlemodal = '';
 	private $idfilter = '';
@@ -268,7 +268,7 @@ class Grid{
 	private function get_buttonsrecord(){
 		$data = '';
 		foreach ($this->buttonsrecord as $key => $value) {
-			$data .= ",{className:'btngrid',orderable:false,data:null,width:'5%',defaultContent:'<span class='glyphicon glyphicon-$key' aria-hidden='true'></span>'}";
+			$data .= ",{className:'btngrid',orderable:false,data:null,width:'5%',defaultContent:'<span class=\"glyphicon glyphicon-$key\" aria-hidden=\"true\"></span>'}";
 		}  
 		return $data;	
 	}
@@ -313,21 +313,21 @@ class Grid{
 	private function get_jsbuttons(){
 		$countrow = 0; 
 		if($this->select == true){
-			$countrow = count($this->data)+1;
-		}else{
 			$countrow = count($this->data);
+		}else{
+			$countrow = count($this->data)-1;
 		}	
 		$data = '';
 		foreach ($this->buttonsrecord as $key => $value) {
-			$data .= "if(col == ".++$countrow."){urluser = '$value&modal=".($this->openmodal?"true":"false")."&cod='+iduser;}";
+			$data .= "if(col == ".++$countrow."){urluser = '$value&close=".($this->close?"false":"true")."&cod='+iduser;}else";
 		} 
 		if ($data != ''){
 			return 	" 			
-			$('#$this->idtable tbody').on('click','td',function(){
-				var col = $(this).index();var iduser = table.row($(this).parent()).id();var urluser = '';
+			$('#$this->idtable tbody').on('click','td',function(){			    
+				var col = $(this).index();var iduser = table.row($(this).parent()).id();var urluser = '';				
 				".$data."{return;} 
-				".($this->openmodal?"$('#content-modal').load(urluser); $('#myModal').modal('show');":"$('#main').load(urluser);")."});	".
-				($this->openmodal?"$('#myModal').on('hidden.bs.modal',function(){table.ajax.reload();});":"");	
+				".($this->close?"$('#content-modal').load(urluser); $('#myModal').modal('show');":"$('#main').load(urluser);")."});	".
+				($this->close?"$('#myModal').on('hidden.bs.modal',function(){table.ajax.reload();});":"");	
 		}else{
 			return '';
 		}
@@ -369,9 +369,9 @@ class Grid{
 			(($this->newrecord!='')?"{text:'<span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>',
 			titleAttr:'Novo',
 			action:function ( e, dt, node, config ) {
-				".($this->openmodal?"$('#content-modal').load('$this->newrecord&modal=".($this->openmodal?"false":"true")."'); 
-				$('#myModal').modal('show');":"$('#main').load('$this->newrecord&modal=".($this->openmodal?"false":"true")."');").
-				($this->openmodal?"$('#myModal').on('hidden.bs.modal',function(){table.ajax.reload();});":"")."	
+				".($this->close?"$('#content-modal').load('$this->newrecord&close=".($this->close?"false":"true")."'); 
+				$('#myModal').modal('show');":"$('#main').load('$this->newrecord&close=".($this->close?"false":"true")."');").
+				($this->close?"$('#myModal').on('hidden.bs.modal',function(){table.ajax.reload();});":"")."	
 			}},":"").			
 			($this->buttoncolvisible?"
 			{extend:'colvis',
@@ -458,6 +458,7 @@ function modalfilter($idmodal, $title, $idfilter, $idconfirm){
 }
 
 $consultateste = new Grid('gdbTeste', 'core/pessoa/db.php?action=list&table=teste', 'Consulta Teste');
+$consultateste->setrowid('codigo');
 $consultateste->add_data('codigo', 'Código');
 $consultateste->add_data('descricao', 'Descrição');
 $consultateste->newrecord('core/pessoa/layout.php?type=insert');
@@ -466,6 +467,7 @@ $consultateste->setoptions(true, true, true, false, true, true, true, true, true
 $consultateste->createfilter('mdlteste', 'Filtrar Registros', 'fltTeste', 'btnokfilter');
 $consultateste->add_filter('codigo', 'Código', 'number', 'integer');
 $consultateste->add_filter('descricao', 'Descrição', 'text');
+$consultateste->add_recordbtn('search','core/pessoa/layout.php?type=show');
 echo $consultateste->show();
 	
 ?>

@@ -2,10 +2,13 @@
 
 include 'conection.php';
 
-function processmsg($status, $msg){
+function processmsg($status, $msg, $id = 0){
 	$return = array(); 
 	$return['success'] = $status;	
 	$return['mensage'] = $msg;	
+	if ($id > 0){
+		$return['id'] = $id;	
+	}
 	return $return;
 }
 

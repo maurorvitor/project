@@ -31,33 +31,51 @@ function createlabel($label,$field,$content){
 		</div>
 	</div>";
 }
-
-function createinputtext($id, $name, $required = false,  $autofocus = false, $disabled = false, $placeholder = ''){
-	return 
-	"<input type='text' class='form-control' id='$id' name='$name' placeholder='$placeholder' ".($required ? "required":"")." ".($autofocus ? "autofocus":" ")." ".($disabled ? "disabled":" ").">";
+function createaction($id, $name, $required,  $autofocus, $disabled, $placeholder, $mask, $button, $action){
+	$data = "<div class='input-group'><input type='text' class='form-control' id='$id' name='$name' placeholder='$placeholder' ".($required ? "required":"")." ".($autofocus ? "autofocus":" ")." ".($disabled ? "disabled":" ").">";
+	$data.= "<span class='input-group-btn'><button class='btn btn-default' type='button' id='btn_".$id."'>$button</button></span></div>";
+	if ($mask != ''){
+		$data.= "<script type='text/javascript'>$('#$id').mask('$mask'); $action </script>";
+	}
+	return $data;
 }
 
-function createinputemail($id, $name, $required = false,  $autofocus = false, $disabled = false, $placeholder = ''){
+function createinputtext($id, $name, $required,  $autofocus, $disabled, $placeholder, $mask){
+	$data = "<input type='text' class='form-control' id='$id' name='$name' placeholder='$placeholder' ".($required ? "required":"")." ".($autofocus ? "autofocus":" ")." ".($disabled ? "disabled":" ").">";
+	if ($mask != ''){
+		$data.= "<script type='text/javascript'>$('#$id').mask('$mask');</script>";
+	}
+	return $data;
+}
+function createhidden($id, $name){
+	return 
+	"<input type='hidden' class='form-control' id='$id' name='$name'>";
+}
+function createimg($id, $name, $src){
+	return 
+	"<img src='$src' alt='imagem' class='img-thumbnail' width='96' height='96' id='$id' name='$name'>";
+}
+function createinputemail($id, $name, $required,  $autofocus, $disabled, $placeholder){
 	return 
 	"<input type='email' class='form-control' id='$id' name='$name' placeholder='$placeholder' ".($required ? "required":"")." ".($autofocus ? "autofocus":" ")." ".($disabled ? "disabled":" ").">";
 }
-function createtextarea($id, $name, $required = false,  $autofocus = false, $disabled = false, $placeholder = ''){
+function createtextarea($id, $name, $required,  $autofocus, $disabled, $placeholder){
 	return 
 	"<textarea class='form-control' id='$id' rows='5' name='$name' placeholder='$placeholder' ".($required ? "required":"")." ".($autofocus ? "autofocus":" ")." ".($disabled ? "disabled":" ")."></textarea>";
 }
-function createradiobox($id, $name, $values, $required = false,  $disabled = false){
+function createradiobox($id, $name, $values, $required,  $disabled){
 	$data = '';
 	foreach($values as $key => $value){
 		$data .= "<label class='radio-inline'><input type='radio' value='$key' id='$id' name='$name'  ".($required ? "required":"")."  ".($disabled ? "disabled":" ").">$value</label>";
 	}
 	return $data;
 }
-function createcheckbox($id, $name, $value, $required = false,  $disabled = false){
+function createcheckbox($id, $name, $value, $required,  $disabled){
 	return 
 	"<input type='checkbox' value='$value' id='$id' name='$name'  ".($required ? "required":"")."  ".($disabled ? "disabled":" ").">";
 }
 
-function createdate($id, $name, $required = false,  $disabled = false, $current = false, $hour = false){
+function createdate($id, $name, $required, $disabled, $current, $hour){
 	return 
 	"<div class='input-group date' id='".$id."_div'>
 		<input type='text' class='form-control' id='$id' name='$name' ".($required ? "required":"")."  ".($disabled ? "disabled":" ")." />
@@ -76,7 +94,7 @@ function createdate($id, $name, $required = false,  $disabled = false, $current 
     </script>";
 }
 
-function createhour($id, $name, $required = false,  $disabled = false, $current = false){
+function createhour($id, $name, $required, $disabled, $current){
 	return 
 	"<div class='input-group date' id='".$id."_div'>
 		<input type='text' class='form-control' id='$id' name='$name' ".($required ? "required":"")."  ".($disabled ? "disabled":" ")." />
@@ -95,125 +113,44 @@ function createhour($id, $name, $required = false,  $disabled = false, $current 
     </script>";
 }
 function createselect($id, $name, $values, $required,  $disabled, $placeholder){
-	$data = "<select class='form-control' id='$id' name='$name' placeholder='$placeholder' ".($required ? "required":"")."  ".($disabled ? "disabled":" ").">";
+	$data = "<select class='selectpicker form-control' id='$id' name='$name' ".($required ? "required":"")."  ".($disabled ? "disabled":" ").">";
 	foreach($values as $key => $value){
 		$data .= "<option value='$key'>$value</option>";
 	}
-	$data .= "</select>";
+	$data .= "</select><script type='text/javascript'> $('#$id').selectpicker('refresh'); </script>	";
 	return $data;	
 }
-function createbuttons($insert = false, $edit = false, $delete = false, $modal = false){
+function createtab($name, $label, $active, $content){
+	return "<div id='$name' class='tab-pane fade in ".($active?"active":"")."'><br>$content<br></div>";	
+}
+function createlookup($id, $name, $table, $fields, $required,  $disabled){
+	$data = "<select class='selectpicker form-control' data-live-search='true' id='$id' name='$name' ".($required ? "required":"")."  ".($disabled ? "disabled":" ").">";
+    $data .= "<option value=''></option>";	
+	$data .= "</select>
+	<script type='text/javascript'>			
+			$.getJSON('core/data/lookup.php?table=$table&fields=$fields', function(result){
+				$.each(result, function(i, val){		
+					 $('#$id').append('<option value=\''+val.id+'\' title=\''+val.value+'\' data-tokens=\''+val.list+'\'>'+val.list+'</option>');
+					 $('#$id').selectpicker('refresh');
+				});
+			});			
+	</script>";
+	return $data;	
+}
+function createfile($id, $name, $button, $accept, $required,  $disabled){
+  return "<span class='btn btn-primary btn-file'> $button <input type='file' id='$id' name='$name' accept='$accept' ".($required ? "required":"")."  ".($disabled ? "disabled":" ")."></span>";	
+}
+function createbuttons($insert = false, $edit = false, $delete = false, $close = false){
 	return 
 	"<div class='form-group'> 
 		<div class='col-sm-offset-2 col-sm-10'>
 		    ".($insert ? "<button type='submit' class='btn btn-primary'>Salvar</button>":"")."			
 			".($edit ? "<button id='btnEdit' type='button' class='btn btn-primary'>Salvar</button>":"")."
 			".($delete ? "<button id='btnDelete' type='button' class='btn btn-danger'>Confirmar</button>":"")."
-			".($modal ? "<button id='btnfechar' type='button' class='btn btn-default' >Fechar</button>":"")."
+			".($close ? "<button id='btnfechar' type='button' class='btn btn-default' >Fechar</button>":"")."
 		</div>
 	</div>";
 }	
-
-function getjscad($idform, $action){
-	return 
-	"<script type='text/javascript'>
-		$(document).ready(function(){
-			var idform = '#$idform';
-			$(idform).validator().on('submit', function (e) {		
-				e.preventDefault(); 
-				$(idform).validator('validate');		
-				if ($('.has-error').length == 0){
-					var formData = new FormData($(idform)[0]);
-					$.ajax({
-						type: 'POST',
-						dataType: 'json', 
-						async: false,
-						url: '$action',
-						data: formData,
-						processData: false,  
-						contentType: false,				
-						success: function (response) {			
-							mensagem(response);
-							$(idform).trigger('reset');
-						}
-					});		
-				}
-			}); 
-		});
-	</script> ";	
-}
-
-function getjsedt($idform, $action){
-	return 
-	"<script type='text/javascript'>
-		$(document).ready(function(){			
-			var idform = '#$idform';
-			$('#btnEdit').on('click', function () {	
-				$(idform).validator('validate');
-				if ($('.has-error').length == 0){
-					var formData = new FormData($(idform)[0]);
-					$.ajax({
-						type: 'POST',
-						dataType: 'json', 
-						async: false,
-						url: '$action',
-						data: formData,
-						processData: false,  
-						contentType: false,				
-						success: function (response) {			
-							mensagem(response);					
-						}
-					});				
-				}	
-			}); 
-		});	
-	</script> ";	
-}
-
-function getjsdel($idform, $action){
-	return 
-	"<script type='text/javascript'>
-		$(document).ready(function(){			
-			var idform = '#$idform';
-			$('#btnDelete').on('click', function () {	
-				$.ajax({
-					type: 'POST',
-					dataType: 'json', 
-					async: false,
-					url: '$action',
-					success: function (response) {
-						mensagem(response);
-					}			
-				});	
-			});	
-		});	
-	</script> ";	
-}
-
-function getjsclose($url){
-	return 
-	"<script type='text/javascript'>
-		$(document).ready(function(){			
-			$('#btnfechar').on('click', function () {	
-				$('#main').load('$url');
-			});	
-		});	
-	</script> ";	
-}
-
-function getfields($idform, $action){
-	return 
-	"<script type='text/javascript'>
-		$(document).ready(function(){
-			var idform = '#$idform';	
-			$.getJSON('$action', function(result){
-				$.each(result, function(i, field){				
-					$(idform+' #'+i).val(field);
-				});
-			});							
-		});
-	</script> ";	
-}
 
 class Form{
 	private $title = '';
@@ -223,7 +160,7 @@ class Form{
 	private $table = '';
 	private $key = '';
 	private $type = '';
-	private $modal = true;
+	private $close = true;
 	private $cod = 0;
 	private $baseurl = 'http://localhost/Portal/';
 	private $redirect = 'index.php';
@@ -233,6 +170,122 @@ class Form{
 	private $insert = false;
 	private $edit = false;
 	private $delete = false;
+	private $titletabs = '';
+	
+	private function getjscad($action){
+		return 
+		"<script type='text/javascript'>
+
+				var idform = '#$this->id';
+				$(idform).validator().on('submit', function (e) {		
+					e.preventDefault(); 
+					$(idform).validator('validate');		
+					if ($('.has-error').length == 0){
+						var formData = new FormData($(idform)[0]);
+						$.ajax({
+							type: 'POST',
+							dataType: 'json', 
+							async: false,
+							url: '$action',
+							data: formData,
+							processData: false,  
+							contentType: false,				
+							success: function (response) {
+								mensagem(response);
+								$(idform).trigger('reset');
+							}
+						});		
+					}
+				}); 
+
+		</script> ";	
+	}
+
+	private function getjsedt($action){
+		return 
+		"<script type='text/javascript'>
+		
+				var idform = '#$this->id';
+				$('#btnEdit').on('click', function () {	
+					$(idform).validator('validate');
+					if ($('.has-error').length == 0){
+						var formData = new FormData($(idform)[0]);
+						$.ajax({
+							type: 'POST',
+							dataType: 'json', 
+							async: false,
+							url: '$action',
+							data: formData,
+							processData: false,  
+							contentType: false,				
+							success: function (response) {			
+								mensagem(response);					
+							}
+						});				
+					}	
+				}); 
+
+		</script> ";	
+	}
+
+	private function getjsdel($action){
+		return 
+		"<script type='text/javascript'>
+		
+				var idform = '#$this->id';
+				$('#btnDelete').on('click', function () {	
+					$.ajax({
+						type: 'POST',
+						dataType: 'json', 
+						async: false,
+						url: '$action',
+						success: function (response) {
+							mensagem(response);
+						}			
+					});	
+				});	
+
+		</script> ";	
+	}
+
+	private function getjsclose($url){ 
+		$data = '';
+		if ($this->close == true){
+			$data = "<script type='text/javascript'>
+		
+					$('#btnfechar').on('click', function () {	
+						window.open('$url','_self');
+					});	
+
+			</script> ";
+		}
+		return $data;
+	}
+
+	private function getfields($action){
+		return 
+		"<script type='text/javascript'>
+
+				var idform = '#$this->id';	
+				$.getJSON('$action', function(result){
+					$.each(result, function(i, field){	
+						if ($(idform+' #'+i).is(':radio')) {
+							$(idform+' #'+i+'[value=\"'+field+'\"]').prop('checked',true);	
+						}else
+						if ($(idform+' #'+i).is(':checkbox')) {
+							$(idform+' #'+i+'[value=\"'+field+'\"]').prop('checked',true);	
+						}else
+						if ($(idform+' #'+i).is('select')) {
+							$(idform+' #'+i).val(field);
+							$(idform+' #'+i).selectpicker('render');
+						}else{
+							$(idform+' #'+i).val(field).change();
+						}
+					});
+				});							
+		
+		</script> ";	
+	}	
 	
 	function Form($title, $table, $get, $redirect = ''){
 		$this->title = $title;
@@ -244,8 +297,8 @@ class Form{
 		if (isset($get['type'])){
 			$this->type = $get['type']; 
 		}	
-		if (isset($get['modal'])){
-			$this->modal = (($get['modal'] == 'true')? true: false); 
+		if (isset($get['close'])){
+			$this->close = (($get['close'] == 'true')? true: false); 
 		}			
 		$this->redirect = $redirect; 
 	}
@@ -273,9 +326,9 @@ class Form{
 		$this->insert = true;
 		$this->action = "core/pessoa/db.php?action=insert&table=$this->table";
 		$this->id = 'frmins'.$this->table;		
-		$content .= getjscad($this->id, $this->action);
+		$content .= $this->getjscad($this->action);
 		$content .= $this->create($this->id); 
-		$content .= getjsclose($this->baseurl.$this->redirect);			
+		$content .= $this->getjsclose($this->baseurl.$this->redirect);			
 		return $content;
 	}
 	private function showedit($cod){
@@ -285,9 +338,9 @@ class Form{
 		$this->action = "core/pessoa/db.php?action=update&table=$this->table&id=$cod&key=$this->key";
 		$this->id = 'frmedt'.$this->table;				
 		$content .= $this->create($this->id); 	
-		$content .= getfields($this->id, "core/pessoa/db.php?action=select&table=$this->table&id=$cod&key=$this->key");
-		$content .= getjsedt($this->id, $this->action);		
-		$content .= getjsclose($this->baseurl.$this->redirect);			
+		$content .= $this->getfields("core/pessoa/db.php?action=select&table=$this->table&id=$cod&key=$this->key");
+		$content .= $this->getjsedt($this->action);		
+		$content .= $this->getjsclose($this->baseurl.$this->redirect);			
 		return $content;
 	}	
 	private function showdelete($cod){
@@ -299,9 +352,9 @@ class Form{
 		$this->action = "core/pessoa/db.php?action=delete&table=$this->table&id=$cod&key=$this->key";
 		$this->id = 'frmedt'.$this->table;				
 		$content .= $this->create($this->id); 	
-		$content .= getfields($this->id, "core/pessoa/db.php?action=select&table=$this->table&id=$cod&key=$this->key");
-		$content .= getjsdel($this->id, $this->action);			
-		$content .= getjsclose($this->baseurl.$this->redirect);			
+		$content .= $this->getfields("core/pessoa/db.php?action=select&table=$this->table&id=$cod&key=$this->key");
+		$content .= $this->getjsdel($this->id, $this->action);			
+		$content .= $this->getjsclose($this->baseurl.$this->redirect);			
 		return $content;
 	}	
 	
@@ -313,14 +366,15 @@ class Form{
 		$this->action = "";
 		$this->id = 'frmsel'.$this->table;				
 		$content .= $this->create($this->id); 	
-		$content .= getfields($this->id, "core/pessoa/db.php?action=select&table=$this->table&id=$cod&key=$this->key");
-		$content .= getjsclose($this->baseurl.$this->redirect);			
+		$content .= $this->getfields("core/pessoa/db.php?action=select&table=$this->table&id=$cod&key=$this->key");
+		$content .= $this->getjsclose($this->baseurl.$this->redirect);			
 		return $content;
 	}		
 	
 	private function create($id){
 		$this->id = $id;
 		$this->content .= $this->firstfields;
+		$this->content .= $this->get_tab($this->titletabs);
 		$this->content .= $this->createfields();
 		$this->content .= $this->afterfields;
 		$this->content .= $this->createbuttons();
@@ -360,8 +414,14 @@ class Form{
 	private function createfield($field){
 		switch ($field->tipo) {
 			case 'text':
-				return createinputtext($field->id, $field->name, $field->required,  $field->autofocus, $field->disabled, $field->placeholder);
+				return createinputtext($field->id, $field->name, $field->required,  $field->autofocus, $field->disabled, $field->placeholder, $field->mask);
 			break; 
+			case 'action':
+				return createaction($field->id, $field->name, $field->required,  $field->autofocus, $field->disabled, $field->placeholder, $field->mask, $field->button, $field->action);
+			break;			
+			case 'hidden':
+				return createhidden($field->id, $field->name);
+			break; 			
 			case 'email':
 				return createinputemail($field->id, $field->name, $field->required,  $field->autofocus, $field->disabled, $field->placeholder);
 			break;
@@ -383,23 +443,39 @@ class Form{
 			case 'hour'	:
 				return  createhour($field->id, $field->name, $field->required,  $field->disabled, $field->current);
 			break; 			
+			case 'lookup':
+				return  createlookup($field->id, $field->name, $field->table, $field->fields, $field->required,  $field->disabled);
+			break;
+			case 'file':
+				return  createfile($field->id, $field->name, $field->button, $field->accept, $field->required,  $field->disabled);
+			break;			
+			case 'img':
+				return  createimg($field->id, $field->name, $field->src);
+			break;			
 		}		
 	}	
 	private function createfields(){		
+		$tab = '';
 		$fields = '';
 		foreach($this->fields as $key => $value){
 			if (!(($this->insert == true)&&($value->key == true))){
 				$input = '';
-				$input = $this->createfield($value);
-				$fields = $fields.createlabel($value->label,$value->name, $input);
+				if ($value->tipo == 'tab'){
+					$tab .= createtab($value->name, $value->label, $value->active, $fields);
+					$fields = '';
+				}else{				
+					$input = $this->createfield($value);
+					$fields .= createlabel($value->label,$value->name, $input);
+				}
 			}
 		}
-		return $fields;
+		$tab =(($tab!='')?"<div class='tab-content'>$tab</div>":"");
+		return $tab.$fields;
 	}
 	private function createbuttons(){
-		return createbuttons($this->insert, $this->edit, $this->delete, $this->modal);
+		return createbuttons($this->insert, $this->edit, $this->delete, $this->close);
 	}
-	public function newText($name, $label, $required = false, $autofocus = false, $placeholder = '', $disabled = false){
+	public function newText($name, $label, $required = false, $autofocus = false, $placeholder = '', $disabled = false, $mask = ''){
 		$field = new Field;		
 		$field->tipo = 'text';
 		$field->id = $name;
@@ -409,8 +485,33 @@ class Form{
 		$field->autofocus = $autofocus;
 		$field->placeholder = $placeholder;
 		$field->disabled = $disabled;
+		$field->mask = $mask;
 		array_push($this->fields, $field);
 	}
+	public function newImg($name, $label, $src){
+		$field = new Field;		
+		$field->tipo = 'img';
+		$field->id = $name;
+		$field->name = $name;
+		$field->label = $label;
+		$field->src = $src;
+		array_push($this->fields, $field);
+	}	
+	public function newAction($name, $label, $required = false, $autofocus = false, $placeholder = '', $disabled = false, $mask = '', $button = '', $action = ''){
+		$field = new Field;		
+		$field->tipo = 'action';
+		$field->id = $name;
+		$field->name = $name;
+		$field->label = $label;
+		$field->required = $required; 
+		$field->autofocus = $autofocus;
+		$field->placeholder = $placeholder;
+		$field->disabled = $disabled;
+		$field->mask = $mask;
+		$field->button = $button;
+		$field->action = $action;
+		array_push($this->fields, $field);
+	}	
 	public function newTextArea($name, $label, $required = false, $autofocus = false, $placeholder = '', $disabled = false){
 		$field = new Field;		
 		$field->tipo = 'textarea';
@@ -449,7 +550,7 @@ class Form{
 		$field->values = $values;
 		array_push($this->fields, $field);
 	}	
-	public function newSelect($name, $label, $values, $required = false, $disabled = false, $placeholder = ''){
+	public function newSelect($name, $label, $values, $required = false, $disabled = false){
 		$field = new Field;		
 		$field->tipo = 'select';
 		$field->id = $name;
@@ -457,9 +558,20 @@ class Form{
 		$field->label = $label;
 		$field->required = $required; 
 		$field->autofocus = false;
-		$field->placeholder = $placeholder;
 		$field->disabled = $disabled;
 		$field->values = $values;
+		array_push($this->fields, $field);
+	}
+	public function newLookup($name, $label, $table, $fields, $required = false, $disabled = false){
+		$field = new Field;		
+		$field->tipo = 'lookup';
+		$field->id = $name;
+		$field->name = $name;
+		$field->label = $label;
+		$field->required = $required; 
+		$field->disabled = $disabled;
+		$field->table = $table;
+		$field->fields = implode(',',$fields);
 		array_push($this->fields, $field);
 	}	
 	public function newDate($name, $label, $required = false, $disabled = false, $current = false, $hour = false){
@@ -487,6 +599,13 @@ class Form{
 		$field->current = $current;	
 		array_push($this->fields, $field);
 	}	
+	public function newHidden($name){
+		$field = new Field;		
+		$field->tipo = 'hidden';
+		$field->id = $name;
+		$this->key = $name;
+		array_push($this->fields, $field);
+	}		
 	public function newKey($name, $label){
 		$field = new Field;		
 		$field->tipo = 'text';
@@ -497,7 +616,32 @@ class Form{
 		$field->label = $label;	
 		$field->disabled = true;
 		array_push($this->fields, $field);
+	}
+	public function newFile($name, $label, $button, $accept, $required = false, $disabled = false){
+		$field = new Field;		
+		$field->tipo = 'file';
+		$field->id = $name;
+		$field->name = $name;
+		$field->label = $label;	
+		$field->disabled = $disabled;
+		$field->required = $required;
+		$field->button = $button;
+		$field->accept = $accept;
+		array_push($this->fields, $field);
 	}	
+	public function newTab($name, $label, $active = false){
+		$field = new Field;		
+		$field->tipo = 'tab';
+		$field->id = $name;
+		$field->name = $name;
+		$field->label = $label;	
+		$field->active = $active;
+		array_push($this->fields, $field);
+		$this->titletabs .= "<li ".($active?"class='active'":"")."><a data-toggle='tab' href='#$name'>$label</a></li>";		
+	}
+	public function get_tab($content){
+		return (($content != '')? "<ul class='nav nav-tabs'>$content</ul>":"");
+	}
 }	
 
 class Field{
@@ -514,18 +658,33 @@ class Field{
 	public $values = array();
 	public $current = false;
 	public $hour = false;
+	public $active = false;
+	public $table = '';
+	public $fields = '';
+	public $mask = '';
+	public $button = '';
+	public $action = '';
+	public $accept = '';
+	public $src = '';
 }	
 
 
-$form = new Form('Teste','teste',$_GET);	
+$form = new Form('Teste','teste',$_GET,'index.php?page=teste');	
+//$form->newHidden('codigo');
 $form->newKey('codigo', 'Código');
 $form->newText('descricao', 'Descrição', true, false, 'Digite a descrição');
 $form->newTextArea('observacao', 'Observacao');
 $form->newCheckbox('concorda', 'Concorda', '1');
 $form->newRadiobox('sexo', 'Sexo', array('M'=>'Masculino','F'=>'Feminino'));
-$form->newSelect('estado', 'Estado Civil', array(''=>'','S'=>'Solteiro','C'=>'Casado','V'=>'Viúvo'), true, false, 'Digite aqui');
-$form->newDate('data', 'Data', false, true, true, true);
-$form->newHour('hora', 'Hora', false, true, true);
+//$form->newTab('home','Principal', true);
+$form->newSelect('estado', 'Estado Civil', array(''=>'','S'=>'Solteiro','C'=>'Casado','V'=>'Viúvo'));
+$form->newLookup('userid', 'Usuário','user', array('iduser','nome'));
+$form->newDate('data', 'Data', false, false, true, false);
+$form->newHour('hora', 'Hora', false, false, true);
+//$form->newAction('acao', 'Ação', true, false, 'Digite a descrição', false, '','Buscar','acao');
+$form->newFile('file_arquivo', 'Imagem', 'Abrir', '.gif,.jpg,.png');
+//$form->newImg('arquivo','Imagem', '');
+//$form->newTab('add','Adicionais');
 echo $form->show();
 
 ?>
