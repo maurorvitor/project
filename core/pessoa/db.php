@@ -9,6 +9,7 @@
 		public $where = '';				
 		public $values = array();
 		public $result = array();
+		public $dates = array();
 		public $success = false;
 		public $log = false;
 		public $json = null;
@@ -39,6 +40,7 @@
 					}
 				}				
 				//inserindo
+				$this->encodedates();
 				$this->success = table_insert($this->table, $this->values, $this->id, $this->result, $this->log);
 				//ação before insert
 				if (($this->success == true)&&(is_callable($this->afterinsert))){
@@ -56,6 +58,7 @@
 					}
 				}
 				//atualizando
+				$this->encodedates();
 				$this->success = table_update($this->table, $this->values, array("$this->pkname"=>$this->pkvalue), $this->result, $this->log);
 				//ação before update
 				if (($this->success == true)&&(is_callable($this->afterupdate))){
@@ -80,18 +83,40 @@
 				}					
 			}
 			if ($this->action == 'select'){			
-				$result = table_select($this->table,'*',array("$this->pkname"=>$this->pkvalue));
-				$this->result = mysqli_fetch_object($result);
+				$result = table_select($this->table,'*',array("$this->pkname"=>$this->pkvalue));				
+				$this->result = mysqli_fetch_array($result, MYSQLI_ASSOC);
+				mysqli_free_result($result);
+				//trata imagens
+				foreach($this->result as $key => $value) {
+					if (!(strpos($key,'img_') === false)){
+						$this->result[$key] = base64_encode($this->result[$key]);
+					}
+				}
+				//trata datas
+				$this->decodedates($this->result);
 			}
 			if ($this->action == 'list'){	
 				$result = table_select($this->table,'*', array(), $this->where);		
 				
 				while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 					$this->linhas[] = $row;
-				}				
+				}
+				
+				mysqli_free_result($result);
 				if (is_callable($this->onlist)){
 					call_user_func($this->onlist);
 				}
+				//trata datas
+				foreach($this->linhas as $rec => $row){			
+					foreach($row as $key => $value){
+						foreach($this->dates as $k => $v){
+							if($k == $key){
+								print_r($this->linhas[$rec][$key]);
+								$this->linhas[$rec][$key] = date("d/m/Y H:i:s", strtotime($this->linhas[$rec][$key]));;
+							}														
+						}						
+					}					
+				}				
 				$data = array();
 				$data['data'] = $this->linhas;				
 				$this->result = $data;
@@ -138,26 +163,44 @@
 				}					
 			}	
 		}
-		public function formatdate($field){
+		private function encodedates(){
+			foreach($this->dates as $key => $value){
+				$this->encodedate($value);
+			}
+		}
+		private function decodedates(&$values){
+			foreach($this->dates as $key => $value){
+				$this->decodedate($value, $values);
+			}
+		}		
+		private function encodedate($field){
 			foreach($this->values as $key => $value){			
 				if($key == $field){
 					$this->values[$key] = date("Y-m-d H:i:s", strtotime(str_replace('/', '-', $this->values[$key])));
 				}													
 			}	
+		}
+		private function decodedate($field, &$values){
+			foreach($values as $key => $value){	
+				if($key == $field){
+					$values[$key] = date("d/m/Y H:i:s", strtotime($values[$key]));;
+				}													
+			}	
 		}		
 	}
 
-	$qryTeste = new Dataquery($_GET, $_POST, $_FILES);		
+	$qryTeste = new Dataquery($_GET, $_POST, $_FILES);
+	$qryTeste->dates = array('data');
 	//closure
-	$qryTeste->beforeinsert = function(){
-		global $qryTeste; 
-		$qryTeste->formatdate('data');
+	// $qryTeste->beforeinsert = function(){
+		// global $qryTeste; 
+		// $qryTeste->formatdate('data');
 		//$qryTeste->values['data'] = date("Y-m-d H:i:s", strtotime(str_replace('/', '-', $qryTeste->values['data'])));
 		//$date =  new DateTime(str_replace('/', '-',$qryTeste->values['data']));
 		//$qryTeste->values['data'] = $date->date_timestamp_get();
 		//print_r($qryTeste->values);
 		//return processmsg(true, 'Registro inserido com sucesso!');
-	};	
+	//};	
 	$qryTeste->onlist = function(){
 		global $qryTeste; 
 		$qryTeste->formatvalue('sexo', array(''=>'','M'=>'Masculino','F'=>'Feminino'));
@@ -165,5 +208,5 @@
 		$qryTeste->formatvalue('concorda', array(''=>'','1'=>'Sim','0'=>'Não'));
 	};	
 	$qryTeste->execute();	
-	echo $qryTeste->json;
+	//echo $qryTeste->json;
 ?>

@@ -319,7 +319,7 @@ class Grid{
 		}	
 		$data = '';
 		foreach ($this->buttonsrecord as $key => $value) {
-			$data .= "if(col == ".++$countrow."){urluser = '$value&close=".($this->close?"false":"true")."&cod='+iduser;}else";
+			$data .= " if(col == ".++$countrow."){urluser = '$value&close=".($this->close?"false":"true")."&cod='+iduser;} else ";
 		} 
 		if ($data != ''){
 			return 	" 			
@@ -461,6 +461,10 @@ $consultateste = new Grid('gdbTeste', 'core/pessoa/db.php?action=list&table=test
 $consultateste->setrowid('codigo');
 $consultateste->add_data('codigo', 'Código');
 $consultateste->add_data('descricao', 'Descrição');
+$consultateste->add_data('sexo', 'Sexo');
+$consultateste->add_data('estado', 'Estado');
+$consultateste->add_data('concorda', 'Concorda');
+$consultateste->add_data('data', 'Data');
 $consultateste->newrecord('core/pessoa/layout.php?type=insert');
 //$consultateste->setoptions($select, $multi, $colvis, $save, $pdf, $excel, $print, $paging, $order, $info, $search);
 $consultateste->setoptions(true, true, true, false, true, true, true, true, true, true, true);
@@ -468,6 +472,8 @@ $consultateste->createfilter('mdlteste', 'Filtrar Registros', 'fltTeste', 'btnok
 $consultateste->add_filter('codigo', 'Código', 'number', 'integer');
 $consultateste->add_filter('descricao', 'Descrição', 'text');
 $consultateste->add_recordbtn('search','core/pessoa/layout.php?type=show');
+$consultateste->add_recordbtn('edit','core/pessoa/layout.php?type=edit');
+$consultateste->add_recordbtn('trash','core/pessoa/layout.php?type=delete');
 echo $consultateste->show();
 	
 ?>

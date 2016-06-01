@@ -51,9 +51,13 @@ function createhidden($id, $name){
 	return 
 	"<input type='hidden' class='form-control' id='$id' name='$name'>";
 }
-function createimg($id, $name, $src){
-	return 
-	"<img src='$src' alt='imagem' class='img-thumbnail' width='96' height='96' id='$id' name='$name'>";
+function createimg($id, $name, $src, $show = true){
+  if ($show == true){
+	$data = "<img src='$src' alt='imagem' class='img-thumbnail' width='96' height='96' id='$id' name='$name'>";
+  }else{
+	$data = "";
+  }
+  return $data;	
 }
 function createinputemail($id, $name, $required,  $autofocus, $disabled, $placeholder){
 	return 
@@ -63,16 +67,21 @@ function createtextarea($id, $name, $required,  $autofocus, $disabled, $placehol
 	return 
 	"<textarea class='form-control' id='$id' rows='5' name='$name' placeholder='$placeholder' ".($required ? "required":"")." ".($autofocus ? "autofocus":" ")." ".($disabled ? "disabled":" ")."></textarea>";
 }
-function createradiobox($id, $name, $values, $required,  $disabled){
-	$data = '';
-	foreach($values as $key => $value){
-		$data .= "<label class='radio-inline'><input type='radio' value='$key' id='$id' name='$name'  ".($required ? "required":"")."  ".($disabled ? "disabled":" ").">$value</label>";
+function createradiobox($id, $name, $values, $required,  $disabled, $inline = true){
+	$data = '';	
+	foreach($values as $key => $value){		
+		$radio = "<input type='radio' value='$key' id='$id' name='$name'  ".($required ? "required":"")."  ".($disabled ? "disabled":" ").">$value";
+		if ($inline == true){
+			$data .="<label class='radio-inline'>$radio</label>";
+		}else{
+			$data .="<div class='radio'><label>$radio</label></div>";
+		}		 
 	}
 	return $data;
 }
-function createcheckbox($id, $name, $value, $required,  $disabled){
+function createcheckbox($id, $name, $value, $label, $required,  $disabled){
 	return 
-	"<input type='checkbox' value='$value' id='$id' name='$name'  ".($required ? "required":"")."  ".($disabled ? "disabled":" ").">";
+	"<label class='checkbox-inline'><input type='checkbox' value='$value' id='$id' name='$name'  ".($required ? "required":"")."  ".($disabled ? "disabled":" ").">$label</label>";
 }
 
 function createdate($id, $name, $required, $disabled, $current, $hour){
@@ -137,8 +146,22 @@ function createlookup($id, $name, $table, $fields, $required,  $disabled){
 	</script>";
 	return $data;	
 }
-function createfile($id, $name, $button, $accept, $required,  $disabled){
-  return "<span class='btn btn-primary btn-file'> $button <input type='file' id='$id' name='$name' accept='$accept' ".($required ? "required":"")."  ".($disabled ? "disabled":" ")."></span>";	
+function createfile($id, $name, $button, $accept, $required,  $disabled, $show = true){
+  if ($show == true){
+	$data = "<div class='botaoArquivo'>Selecionar arquivo...</div><span class='btn btn-primary btn-file'> $button <input type='file' id='$id' name='$name' accept='$accept' ".($required ? "required":"")."  ".($disabled ? "disabled":" ")."></span>
+	<script type='text/javascript'>	
+	var div = document.getElementsByClassName('botaoArquivo')[0];
+	var input = document.getElementById('$id');
+    div.addEventListener('click', function(){input.click();});
+    input.addEventListener('change', function(){
+	var nome = 'Não há arquivo selecionado. Selecionar arquivo...';
+    if(input.files.length > 0) nome = input.files[0].name;
+    div.innerHTML = nome;});
+	</script>";	
+  }else{
+	$data = "";
+  }
+  return $data;
 }
 function createbuttons($insert = false, $edit = false, $delete = false, $close = false){
 	return 
@@ -165,8 +188,6 @@ class Form{
 	private $baseurl = 'http://localhost/Portal/';
 	private $redirect = 'index.php';
 	private $fields = array();
-	private $firstfields = '';
-	private $afterfields = '';
 	private $insert = false;
 	private $edit = false;
 	private $delete = false;
@@ -230,8 +251,7 @@ class Form{
 
 	private function getjsdel($action){
 		return 
-		"<script type='text/javascript'>
-		
+		"<script type='text/javascript'>		
 				var idform = '#$this->id';
 				$('#btnDelete').on('click', function () {	
 					$.ajax({
@@ -243,20 +263,17 @@ class Form{
 							mensagem(response);
 						}			
 					});	
-				});	
-
+				});
 		</script> ";	
 	}
 
 	private function getjsclose($url){ 
 		$data = '';
 		if ($this->close == true){
-			$data = "<script type='text/javascript'>
-		
+			$data = "<script type='text/javascript'>		
 					$('#btnfechar').on('click', function () {	
 						window.open('$url','_self');
 					});	
-
 			</script> ";
 		}
 		return $data;
@@ -269,6 +286,7 @@ class Form{
 				var idform = '#$this->id';	
 				$.getJSON('$action', function(result){
 					$.each(result, function(i, field){	
+						//console.log($(idform+' #src_'+i));
 						if ($(idform+' #'+i).is(':radio')) {
 							$(idform+' #'+i+'[value=\"'+field+'\"]').prop('checked',true);	
 						}else
@@ -278,7 +296,13 @@ class Form{
 						if ($(idform+' #'+i).is('select')) {
 							$(idform+' #'+i).val(field);
 							$(idform+' #'+i).selectpicker('render');
+						}else						
+						if($(idform+' #src_'+i).is('img')){
+							if (field != ''){
+								$(idform+' #src_'+i).attr('src', 'data:image/png;base64,'+field);							
+							}
 						}else{
+							//alert(field);
 							$(idform+' #'+i).val(field).change();
 						}
 					});
@@ -353,7 +377,7 @@ class Form{
 		$this->id = 'frmedt'.$this->table;				
 		$content .= $this->create($this->id); 	
 		$content .= $this->getfields("core/pessoa/db.php?action=select&table=$this->table&id=$cod&key=$this->key");
-		$content .= $this->getjsdel($this->id, $this->action);			
+		$content .= $this->getjsdel($this->action);			
 		$content .= $this->getjsclose($this->baseurl.$this->redirect);			
 		return $content;
 	}	
@@ -373,26 +397,11 @@ class Form{
 	
 	private function create($id){
 		$this->id = $id;
-		$this->content .= $this->firstfields;
 		$this->content .= $this->get_tab($this->titletabs);
 		$this->content .= $this->createfields();
-		$this->content .= $this->afterfields;
 		$this->content .= $this->createbuttons();
 		return createform($this->title, $this->id, $this->content);
-	}
-
-	public function setfirstfields($firstfields){
-		$this->firstfields = $firstfields;
-	}
-	public function setafterfields($afterfields){
-		$this->afterfields = $afterfields;
-	}	
-	public function setredirect($url){
-		$this->redirect = $url;
-	}	
-	public function addfield($ord, $field){
-		$this->fields[$ord] = $field;
-	}
+	}		
 	private function refresh(){
 		$this->content = '';
 		$this->insert = false;
@@ -429,7 +438,7 @@ class Form{
 				return createtextarea($field->id, $field->name, $field->required,  $field->autofocus, $field->disabled, $field->placeholder);
 			break; 
 			case 'checkbox'	:
-				return  createcheckbox($field->id, $field->name, $field->value, $field->required,  $field->disabled);
+				return  createcheckbox($field->id, $field->name, $field->value, $field->button, $field->required,  $field->disabled);
 			break; 
 			case 'radiobox'	:
 				return  createradiobox($field->id, $field->name, $field->values, $field->required,  $field->disabled);
@@ -438,19 +447,19 @@ class Form{
 				return  createselect($field->id, $field->name, $field->values, $field->required,  $field->disabled, $field->placeholder);
 			break; 	
 			case 'date'	:
-				return  createdate($field->id, $field->name, $field->required,  $field->disabled, $field->current, $field->hour);
+				return  createdate($field->id, $field->name, $field->required,  $field->disabled, (($field->current&&$this->insert)?true:false), $field->hour);
 			break; 				
 			case 'hour'	:
-				return  createhour($field->id, $field->name, $field->required,  $field->disabled, $field->current);
+				return  createhour($field->id, $field->name, $field->required,  $field->disabled, (($field->current&&$this->insert)?true:false));
 			break; 			
 			case 'lookup':
 				return  createlookup($field->id, $field->name, $field->table, $field->fields, $field->required,  $field->disabled);
 			break;
 			case 'file':
-				return  createfile($field->id, $field->name, $field->button, $field->accept, $field->required,  $field->disabled);
+				return  createfile($field->id, $field->name, $field->button, $field->accept, $field->required,  $field->disabled ,(($this->insert||$this->edit)?true:false));
 			break;			
 			case 'img':
-				return  createimg($field->id, $field->name, $field->src);
+				return  createimg($field->id, $field->name, $field->src, (($this->insert)?false:true));
 			break;			
 		}		
 	}	
@@ -488,7 +497,7 @@ class Form{
 		$field->mask = $mask;
 		array_push($this->fields, $field);
 	}
-	public function newImg($name, $label, $src){
+	public function newImg($name, $label, $src = 'img/error.jpg'){
 		$field = new Field;		
 		$field->tipo = 'img';
 		$field->id = $name;
@@ -524,12 +533,12 @@ class Form{
 		$field->disabled = $disabled;
 		array_push($this->fields, $field);
 	}	
-	public function newCheckbox($name, $label, $value, $required = false, $disabled = false){
+	public function newCheckbox($name, $button, $value, $required = false, $disabled = false){
 		$field = new Field;		
 		$field->tipo = 'checkbox';
 		$field->id = $name;
 		$field->name = $name;
-		$field->label = $label;
+		$field->button = $button;
 		$field->required = $required; 
 		$field->autofocus = false;
 		$field->placeholder = '';
@@ -628,7 +637,24 @@ class Form{
 		$field->button = $button;
 		$field->accept = $accept;
 		array_push($this->fields, $field);
-	}	
+	}
+	public function newImgFile($name, $label, $required = false){
+		$field = new Field;		
+		$field->tipo = 'img';
+		$field->id = 'src_'.$name;
+		$field->name = 'src_'.$name;
+		$field->label = $label;
+		$field->src = 'img/img_not_found.gif';
+		array_push($this->fields, $field);		
+		$field = new Field;		
+		$field->tipo = 'file';
+		$field->id = $name;
+		$field->name = $name;
+		$field->required = $required;
+		$field->button = 'Selecionar';
+		$field->accept = '.gif,.jpg,.png';
+		array_push($this->fields, $field);	
+	}		
 	public function newTab($name, $label, $active = false){
 		$field = new Field;		
 		$field->tipo = 'tab';
@@ -659,6 +685,7 @@ class Field{
 	public $current = false;
 	public $hour = false;
 	public $active = false;
+	public $inline = true;
 	public $table = '';
 	public $fields = '';
 	public $mask = '';
@@ -682,8 +709,9 @@ $form->newLookup('userid', 'Usuário','user', array('iduser','nome'));
 $form->newDate('data', 'Data', false, false, true, false);
 $form->newHour('hora', 'Hora', false, false, true);
 //$form->newAction('acao', 'Ação', true, false, 'Digite a descrição', false, '','Buscar','acao');
-$form->newFile('file_arquivo', 'Imagem', 'Abrir', '.gif,.jpg,.png');
-//$form->newImg('arquivo','Imagem', '');
+//$form->newImg('src_img_arquivo','Imagem');
+//$form->newFile('img_arquivo', '', 'Abrir', '.gif,.jpg,.png');
+$form->newImgFile('img_arquivo', 'Imagem');
 //$form->newTab('add','Adicionais');
 echo $form->show();
 
