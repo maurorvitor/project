@@ -1,5 +1,6 @@
 <?php
 	include '../data/dblib.php';	
+	include '../data/form.php';
 	
 	class Dataquery{		
 		private $action;
@@ -59,6 +60,7 @@
 				}
 				//atualizando
 				$this->encodedates();
+				//print_r($this->values);
 				$this->success = table_update($this->table, $this->values, array("$this->pkname"=>$this->pkvalue), $this->result, $this->log);
 				//ação before update
 				if (($this->success == true)&&(is_callable($this->afterupdate))){
@@ -84,8 +86,7 @@
 			}
 			if ($this->action == 'select'){			
 				$result = table_select($this->table,'*',array("$this->pkname"=>$this->pkvalue));				
-				$this->result = mysqli_fetch_array($result, MYSQLI_ASSOC);
-				mysqli_free_result($result);
+				$this->result = $result->fetch(PDO::FETCH_ASSOC);
 				//trata imagens
 				foreach($this->result as $key => $value) {
 					if (!(strpos($key,'img_') === false)){
@@ -98,11 +99,10 @@
 			if ($this->action == 'list'){	
 				$result = table_select($this->table,'*', array(), $this->where);		
 				
-				while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+				while ($row = $result->fetch(PDO::FETCH_ASSOC)){
 					$this->linhas[] = $row;
-				}
-				
-				mysqli_free_result($result);
+				}				
+				//mysqli_free_result($result);
 				if (is_callable($this->onlist)){
 					call_user_func($this->onlist);
 				}
@@ -110,9 +110,10 @@
 				foreach($this->linhas as $rec => $row){			
 					foreach($row as $key => $value){
 						foreach($this->dates as $k => $v){
-							if($k == $key){
-								print_r($this->linhas[$rec][$key]);
-								$this->linhas[$rec][$key] = date("d/m/Y H:i:s", strtotime($this->linhas[$rec][$key]));;
+							if(($v == $key)&&(! is_null($this->linhas[$rec][$key]))){
+								//print_r($this->linhas[$rec][$key]);
+								$this->linhas[$rec][$key] = date("d/m/Y H:i:s", strtotime($this->linhas[$rec][$key]));
+								//print_r($this->linhas[$rec][$key]);
 							}														
 						}						
 					}					
@@ -163,6 +164,15 @@
 				}					
 			}	
 		}
+		public function formatinput($field, $type){
+			foreach($this->linhas as $rec => $row){			
+				foreach($row as $key => $value){
+					if($key == $field->name){
+						$this->linhas[$rec][$key] = createinputtext($field->id, $field->name, $field->required,  $field->autofocus, $field->disabled, $field->placeholder, $field->mask, $value);	
+					}					
+				}					
+			}	
+		}		
 		private function encodedates(){
 			foreach($this->dates as $key => $value){
 				$this->encodedate($value);
@@ -188,25 +198,4 @@
 			}	
 		}		
 	}
-
-	$qryTeste = new Dataquery($_GET, $_POST, $_FILES);
-	$qryTeste->dates = array('data');
-	//closure
-	// $qryTeste->beforeinsert = function(){
-		// global $qryTeste; 
-		// $qryTeste->formatdate('data');
-		//$qryTeste->values['data'] = date("Y-m-d H:i:s", strtotime(str_replace('/', '-', $qryTeste->values['data'])));
-		//$date =  new DateTime(str_replace('/', '-',$qryTeste->values['data']));
-		//$qryTeste->values['data'] = $date->date_timestamp_get();
-		//print_r($qryTeste->values);
-		//return processmsg(true, 'Registro inserido com sucesso!');
-	//};	
-	$qryTeste->onlist = function(){
-		global $qryTeste; 
-		$qryTeste->formatvalue('sexo', array(''=>'','M'=>'Masculino','F'=>'Feminino'));
-		$qryTeste->formatvalue('estado', array(''=>'','S'=>'Solteiro','C'=>'Casado','V'=>'Viúvo'));
-		$qryTeste->formatvalue('concorda', array(''=>'','1'=>'Sim','0'=>'Não'));
-	};	
-	$qryTeste->execute();	
-	//echo $qryTeste->json;
 ?>

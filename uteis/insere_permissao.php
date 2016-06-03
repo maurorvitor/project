@@ -5,7 +5,7 @@
 		$iduser = $_GET['iduser']; 
 		
 		$result = table_select('permissao','tabela,descricao,inserir,alterar,apagar,visualizar',array('iduser'=>1));
-		while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+		while ($row = $result->fetch(PDO::FETCH_ASSOC)){
 			$row['inserir'] = 0;
 			$row['alterar'] = 0;
 			$row['apagar'] = 0;

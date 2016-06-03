@@ -11,13 +11,14 @@
 		}		
 	}
 
-	$result = table_select($table,'iduser,nome,email,login,senha', array('login'=>$values['login']));
+	$result = table_select($table,'iduser,nome,email,login,senha', array('login'=>'adm'));
 	
-	if (mysqli_num_rows($result) == 0){
+	if ($result->rowCount() == 0){
 		$response['success'] = false;
 		$response['mensage'] = 'Login não encontrado!';			
 	}else{
-		$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+		$row = $result->fetch(PDO::FETCH_ASSOC);
+
 		if (md5($values['senha']) != $row['senha']){
 			$response['success'] = false;
 			$response['mensage'] = 'Senha incorreta!';			
@@ -33,6 +34,6 @@
 			table_update($table, array('tdultacesso'=>date("Y-m-d H:i:s", time())), array('iduser'=>$row['iduser']));
 		}
 	}
-    //print_r($response);	
-	echo json_encode($response);		
+	
+    echo json_encode($response);		
 ?>

@@ -1,4 +1,4 @@
-<script type="text/javascript">
+'<script type="text/javascript">
  // $(document).ready(function(){
 	// var table = $('#dbguser').DataTable({
         // ajax:'core/pessoa/db.php?action=list&table=teste',
@@ -281,7 +281,17 @@ class Grid{
 			}
 			if($value->type == 'text'){
 				$data .= "{filterName: '$value->name', 'filterType': 'text', field: '$value->name', filterLabel: '$value->title',excluded_operators: ['in', 'not_in']},";
-			}//outros tipos de filtro aqui			
+			}
+			if($value->type == 'date'){
+				$data .= "{filterName: '$value->name', 'filterType': 'text', field: '$value->name', filterLabel: '$value->title',excluded_operators: ['in', 'not_in'],
+				lookup_values:[
+				{lk_option: 'Level1', lk_value: '1'},
+				{lk_option: 'Level2', lk_value: '2'},
+				{lk_option: 'Level3', lk_value: '3', lk_selected: 'yes'}]				
+				},";
+			}
+			
+			//outros tipos de filtro aqui			
 		}
 		if ($data!= ''){
 			return "$('#$this->idfilter').jui_filter_rules({bootstrap_version:'3',filters:[".substr($data,0,-1)."]});";
@@ -396,7 +406,7 @@ class Grid{
 			exportOptions:{columns:'".$this->listindex()."'}}":"").
 			"],columns:[".
 			($this->select?"{className:'select-checkbox',orderable:false,data:null,width: '5%',defaultContent: ''},	":"").$this->get_data().$this->get_buttonsrecord()."],".
-			($this->paging?" ":"scrollY:'200px,'")."
+			($this->paging?" ":"scrollY:'200px',")."
 			scrollCollapse:true,
 			paging:".($this->paging?"true":"false").",
 			ordering:".($this->ordering?"true":"false").",
@@ -455,25 +465,5 @@ function modalfilter($idmodal, $title, $idfilter, $idconfirm){
 		</div>
 	  </div>
 	</div>"	;
-}
-
-$consultateste = new Grid('gdbTeste', 'core/pessoa/db.php?action=list&table=teste', 'Consulta Teste');
-$consultateste->setrowid('codigo');
-$consultateste->add_data('codigo', 'Código');
-$consultateste->add_data('descricao', 'Descrição');
-$consultateste->add_data('sexo', 'Sexo');
-$consultateste->add_data('estado', 'Estado');
-$consultateste->add_data('concorda', 'Concorda');
-$consultateste->add_data('data', 'Data');
-$consultateste->newrecord('core/pessoa/layout.php?type=insert');
-//$consultateste->setoptions($select, $multi, $colvis, $save, $pdf, $excel, $print, $paging, $order, $info, $search);
-$consultateste->setoptions(true, true, true, false, true, true, true, true, true, true, true);
-$consultateste->createfilter('mdlteste', 'Filtrar Registros', 'fltTeste', 'btnokfilter');
-$consultateste->add_filter('codigo', 'Código', 'number', 'integer');
-$consultateste->add_filter('descricao', 'Descrição', 'text');
-$consultateste->add_recordbtn('search','core/pessoa/layout.php?type=show');
-$consultateste->add_recordbtn('edit','core/pessoa/layout.php?type=edit');
-$consultateste->add_recordbtn('trash','core/pessoa/layout.php?type=delete');
-echo $consultateste->show();
-	
+}	
 ?>

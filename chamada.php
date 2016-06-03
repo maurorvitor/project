@@ -7,7 +7,8 @@
 <link href="datatables/select.bootstrap.min.css" rel="stylesheet">
 <link href="css/query-builder.default.min.css" rel="stylesheet">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script src="bootstrap/js/bootstrap.min.js"></script>	
 <script src="bootstrap/js/validator.js"></script>	
 <script src="bootstrap/js/collapse.js"></script>	
@@ -60,7 +61,7 @@
 					include 'core/unidade/unidade_cad.php';
 					break;					
 				case "teste":
-					include 'core/pessoa/consulta.php';
+					include 'core/pessoa/grid.php';
 					break;					
 			}	
 		}else{

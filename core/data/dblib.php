@@ -18,17 +18,17 @@ function tem_permissao($table, $tipo, &$response = array(), $verifica){
 		switch ($tipo) {
 			case "inserir":
 				$result = table_select('permissao','inserir',array('tabela'=>$table,'iduser'=>$id));
-				$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+				$row = $result->fetch(PDO::FETCH_ASSOC);
 				$permissao =  (($row['inserir']==1)?true:false);
 				break;
 			case "alterar":
 				$result = table_select('permissao','alterar',array('tabela'=>$table,'iduser'=>$id));
-				$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+				$row = $result->fetch(PDO::FETCH_ASSOC);
 				$permissao = (($row['alterar']==1)?true:false);
 				break;
 			case "apagar":
 				$result = table_select('permissao','apagar',array('tabela'=>$table,'iduser'=>$id));
-				$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+				$row = $result->fetch(PDO::FETCH_ASSOC);
 				$permissao = (($row['inserir']==1)?true:false);
 				break;					
 		}
@@ -45,7 +45,6 @@ function tem_permissao($table, $tipo, &$response = array(), $verifica){
 
 function table_replace($table, $fields){
 	$link = linkbase();
-	mysqli_set_charset($link, "utf8");
 	$keys = '';
 	$values = '';
 	foreach($fields as $key => $value){
@@ -61,12 +60,11 @@ function table_replace($table, $fields){
 		}		
 	}
 	$sql = " replace into $table($keys)values($values)";     
-	return  mysqli_query($link, $sql);    	
+	return $link->query($sql);    	
 }
 
 function table_insert($table, $fields, &$id = 0, &$response = array(), $verifica_permissao = true){
 	$link = linkbase();
-	mysqli_set_charset($link, "utf8");
 	$keys = '';
 	$values = '';
 	foreach($fields as $key => $value){
@@ -83,14 +81,14 @@ function table_insert($table, $fields, &$id = 0, &$response = array(), $verifica
 	}
 	$sql = " insert into $table($keys)values($values)";     
  	if (tem_permissao($table, 'inserir', $response, $verifica_permissao) == true){
-		$flag =  mysqli_query($link, $sql);  
-		$id = mysqli_insert_id($link);	
+		$flag = $link->query($sql);
+		$id = $link->lastInsertId();
 		if ($flag == true){
 			$response['success'] = true;	
 			$response['mensage'] = 'Registro Inserido com Sucesso!';
 		}else{
 			$response['success'] = false;
-			$response['mensage'] = 'Erro ao inserir registro!-'.mysqli_error($link);		
+			$response['mensage'] = 'Erro ao inserir registro!-'.$link->errorInfo();		
 		}	
 		return $flag;
 	}else{
@@ -100,7 +98,6 @@ function table_insert($table, $fields, &$id = 0, &$response = array(), $verifica
 
 function table_update($table, $fields, $pk, &$response = array(), $verifica_permissao = true){
 	$link = linkbase();
-	mysqli_set_charset($link, "utf8");
 	$keys = '';
 	$values = '';
 	foreach($fields as $key => $value){
@@ -120,13 +117,13 @@ function table_update($table, $fields, $pk, &$response = array(), $verifica_perm
 	$sql = " update $table set $values where($keys) "; 
 	
  	if (tem_permissao($table, 'alterar', $response, $verifica_permissao) == true){
-		$flag = mysqli_query($link, $sql);
+		$flag = $link->query($sql);
 		if ($flag == true){
 			$response['success'] = true;	
 			$response['mensage'] = 'Registro Alterado com Sucesso!';
 		}else{
 			$response['success'] = false;
-			$response['mensage'] = 'Erro ao Alterar registro!-'.mysqli_error($link);		
+			$response['mensage'] = 'Erro ao Alterar registro!-'.$link->errorInfo();		
 		}
 		return $flag;
 	}else{
@@ -136,7 +133,6 @@ function table_update($table, $fields, $pk, &$response = array(), $verifica_perm
 
 function table_delete($table, $pk, &$response = array(), $verifica_permissao = true){
 	$link = linkbase();
-	mysqli_set_charset($link, "utf8");
 	$keys = '';
 	foreach($pk as $key => $value){
 		if($keys != ''){
@@ -147,13 +143,13 @@ function table_delete($table, $pk, &$response = array(), $verifica_permissao = t
 	}	
 	$sql = " delete from $table where($keys) ";     
 	if (tem_permissao($table, 'apagar', $response, $verifica_permissao) == true){
-		$flag = mysqli_query($link, $sql);    
+		$flag = $link->query($sql);   
 		if ($flag == true){
 			$response['success'] = true;	
 			$response['mensage'] = 'Registro Apagado com Sucesso!';
 		}else{
 			$response['success'] = false;
-			$response['mensage'] = 'Erro ao Apagar registro!-'.mysqli_error($link);		
+			$response['mensage'] = 'Erro ao Apagar registro!-'.$link->errorInfo();		
 		}	
 		return  $flag;
 	}else{
@@ -163,7 +159,6 @@ function table_delete($table, $pk, &$response = array(), $verifica_permissao = t
 
 function table_select($table, $fields = '*', $pk = array(), $where = '', $order = ''){
 	$link = linkbase();
-	mysqli_set_charset($link, "utf8");
 	$keys = '';
 	foreach($pk as $key => $value){
 		if($keys != ''){
@@ -179,7 +174,10 @@ function table_select($table, $fields = '*', $pk = array(), $where = '', $order 
 		$order = " order by $order";
 	}	
 	$sql = " select $fields from $table $keys $where $order";     
-	return  mysqli_query($link, $sql);    
+	
+	$sth = $link->prepare($sql);
+	$sth->execute(); 
+	return $sth;  
 }
 
 function format_date($linhas, $coluna){	

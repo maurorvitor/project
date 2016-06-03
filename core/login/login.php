@@ -10,7 +10,7 @@
 				url: 'core/login/logar.php',
 				data: $('#frmlogin').serialize(),
 				success: function (response) {	
-					//console.log(response);				
+
 					if (response.success == true){	
 						$("#alertsucess > span").html(response.mensage);
 						$('#alertsucess').show();

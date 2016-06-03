@@ -11,7 +11,7 @@ if (isset($_GET['fields'])){
 }	
 $result = table_select($table,$fields,array());	
 $data = array();
-while ($row = mysqli_fetch_array($result, MYSQLI_NUM)){
+while ($row = $result->fetch(PDO::FETCH_NUM)){
 	$data[] = ['id'=>$row[0],'value'=>$row[1],'list'=>implode(' , ',$row)];
 }		
 echo json_encode($data);	

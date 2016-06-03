@@ -1,7 +1,7 @@
 <?php
 	function gerapermissao($iduser){
 		$result = table_select('permissao','tabela,descricao,inserir,alterar,apagar,visualizar',array('iduser'=>1));
-		while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+		while ($row = $result->fetch(PDO::FETCH_ASSOC)){
 			$row['inserir'] = 0;
 			$row['alterar'] = 0;
 			$row['apagar'] = 0;
@@ -47,7 +47,7 @@
 	
 	if ($action == 'perm'){		
 		$result = table_select('permissao','idpermissao,descricao,inserir,alterar,apagar,visualizar',array('iduser'=>$id));		
-		while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+		while ($row = $result->fetch(PDO::FETCH_ASSOC)){
 		    $row['inserir']    = '<input style="cursor:pointer" value="1" type="checkbox" '.(($row['inserir'] == 1)?'checked':'').' id="'.$row['idpermissao'].'-inserir" name="'.$row['idpermissao'].'-inserir">';
 		    $row['alterar']    = '<input style="cursor:pointer" value="1" type="checkbox" '.(($row['alterar'] == 1)?'checked':'').' id="'.$row['idpermissao'].'-alterar" name="'.$row['idpermissao'].'-alterar">';
 		    $row['apagar']     = '<input style="cursor:pointer" value="1" type="checkbox" '.(($row['apagar'] == 1)?'checked':'').'   id="'.$row['idpermissao'].'-apagar"  name="'.$row['idpermissao'].'-apagar">';
@@ -62,7 +62,7 @@
 	
 	if ($action == 'list'){	
 		$result = table_select($table,'iduser,nome,email,login,dtcriacao');		
-		while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+		while ($row = $result->fetch(PDO::FETCH_ASSOC)){
 			$row['dtcriacao'] = date("d/m/Y H:i:s", strtotime($row['dtcriacao']));
 			$linhas[] = $row;
 		}
@@ -73,7 +73,7 @@
 	
 	if ($action == 'sel'){
 		$result = table_select($table,'nome,email,login',array('iduser'=>$id));
-        $row = mysqli_fetch_object($result);
+        $row = $result->fetch(PDO::FETCH_ASSOC);
 	    echo json_encode($row);
 	}	
 	

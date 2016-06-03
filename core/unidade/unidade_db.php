@@ -19,7 +19,7 @@
 	
 	if ($action == 'sel'){
 		$result = table_select($table,'nome,email,cnpj,fone,cep,estado,cidade,bairro,endereco,numero',array('idunidade'=>$id));
-        $row = mysqli_fetch_object($result);
+        $row = $result->fetch(PDO::FETCH_ASSOC);
 	    echo json_encode($row);
 	}	
 	if ($action == 'edt'){	

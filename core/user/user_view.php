@@ -58,9 +58,8 @@ $(document).ready(function(){
 		
 		include '../data/dblib.php';			
 		$result = table_select('user','image',array('iduser'=>$id));
-		$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+		$row = $result->fetch(PDO::FETCH_ASSOC);
 		$image = base64_encode($row['image']);				
-		mysqli_free_result($result);
 	}
 	$view = ($page == 'view' ? true : false);
 	$del =  ($page == 'del' ? true : false);

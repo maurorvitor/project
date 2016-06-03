@@ -17,3 +17,14 @@ function mensagem(vresponse){
 		$('#alerterror').show();  
 	}
 }
+
+function validacheck(){
+	// $('input:checkbox').each(function(){
+		// if($(this).prop('checked')){
+			// $(this).attr('value', 1);
+		// } else {
+			// $(this).attr('value', 0);
+		// }					
+		// alert($(this).val());
+	// });
+}

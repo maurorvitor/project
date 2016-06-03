@@ -62,9 +62,8 @@
 	
 	include 'core/data/dblib.php';			
 	$result = table_select('unidade','image',array('idunidade'=>1));
-	$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+	$row = $result->fetch(PDO::FETCH_ASSOC);
 	$image = base64_encode($row['image']);				
-	mysqli_free_result($result);
 	$image = (($image == '')?'img/error.jpg':'data:image/png;base64,'.$image);
 	
 ?>
